@@ -28,6 +28,8 @@ const SQLITE_HARNESSES = new Set([
 ])
 export const SQLITE_MODULES = [
   'src/main/sqlite/sync-database',
+  // Memorial's file database. Bun on macOS cannot reopen WAL SQLite; these tests must use Node.
+  'src/main/memorial/db/open-database',
   'src/main/ai-vault-search/session-search-schema',
   'src/main/ai-vault-search/session-search-store',
   'src/main/persistence/profile-state/profile-state-sqlite-authority',

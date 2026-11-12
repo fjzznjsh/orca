@@ -6,6 +6,7 @@ import {
   projectMemorialHookEvent,
   type MemorialHookEvent
 } from '../../shared/memorial/hook-event'
+import { enqueueMemorialHook } from './task-kernel'
 
 const dedupe = createMemorialHookDedupe()
 const listeners = new Set<(event: MemorialHookEvent) => void>()
@@ -44,6 +45,7 @@ export function observeMemorialCursorHook(
       return
     }
     writeEventLog(event, body)
+    enqueueMemorialHook(event)
     for (const listener of listeners) {
       listener(event)
     }
