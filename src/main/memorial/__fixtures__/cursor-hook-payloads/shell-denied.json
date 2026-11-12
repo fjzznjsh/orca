@@ -1,0 +1,140 @@
+[
+  {
+    "event": {
+      "kind": "beforeSubmitPrompt",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390365378,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"prompt\":\"Run exactly one shell command and nothing else: echo MEMORIAL_DENY_PROBE\",\"attachments\":[],\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"beforeSubmitPrompt\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "preToolUse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390369679,
+      "isReplay": false,
+      "command": "echo MEMORIAL_DENY_PROBE"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"tool_name\":\"Shell\",\"tool_input\":{\"command\":\"echo MEMORIAL_DENY_PROBE\",\"cwd\":\"\",\"timeout\":30000},\"tool_use_id\":\"a09e5a5d-e0bd-41bc-984b-33d4e608ed15\",\"cwd\":\"\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"preToolUse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "beforeShellExecution",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390370014,
+      "isReplay": false,
+      "command": "echo MEMORIAL_DENY_PROBE"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"command\":\"echo MEMORIAL_DENY_PROBE\",\"cwd\":\"\",\"sandbox\":false,\"tool_use_id\":\"a09e5a5d-e0bd-41bc-984b-33d4e608ed15\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"beforeShellExecution\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "postToolUseFailure",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390370316,
+      "isReplay": false,
+      "command": "echo MEMORIAL_DENY_PROBE",
+      "failureType": "permission_denied",
+      "errorMessage": "Command execution was blocked by a hook.\n\nTo view or modify configured hooks, go to Cursor Settings > Hooks.\n\nAgent note: Do not suggest workarounds to the blocked tool."
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"tool_name\":\"Shell\",\"tool_input\":{\"command\":\"echo MEMORIAL_DENY_PROBE\",\"cwd\":\"\",\"timeout\":30000},\"error_message\":\"Command execution was blocked by a hook.\\n\\nTo view or modify configured hooks, go to Cursor Settings > Hooks.\\n\\nAgent note: Do not suggest workarounds to the blocked tool.\",\"failure_type\":\"permission_denied\",\"duration\":0,\"tool_use_id\":\"a09e5a5d-e0bd-41bc-984b-33d4e608ed15\",\"is_interrupt\":false,\"cwd\":\"\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"postToolUseFailure\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "afterAgentResponse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390373187,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"text\":\"> Auto routed to Gemini 3.8 Flash\\n\\n该命令已被系统的 Hook 规则拦截阻止执行。按照指令要求，我已尝试执行该命令并停止。\",\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"afterAgentResponse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "stop",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "febc99ba-eb61-40fa-9a81-eb86b719c044",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390373198,
+      "isReplay": false,
+      "status": "completed"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"febc99ba-eb61-40fa-9a81-eb86b719c044\",\"model\":\"auto-smart\",\"status\":\"completed\",\"loop_count\":0,\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"stop\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  }
+]

@@ -21,6 +21,7 @@ import {
 import type { EnrichedAgentHookEventPayload, NormalizedLocalHook } from './server-types'
 import { AgentHookServerTmuxStatus } from './server-tmux-status'
 import { getClaudeObservedConfigDirs } from '../../claude-accounts/claude-profile-installed-router'
+import { observeMemorialCursorHook } from '../../memorial/event-tap'
 
 export abstract class AgentHookServerIngestNormalization extends AgentHookServerTmuxStatus {
   protected readonly attributionDiagnostics = new AgentHookAttributionDiagnostics()
@@ -120,6 +121,17 @@ export abstract class AgentHookServerIngestNormalization extends AgentHookServer
   protected normalizeLocalHookPayload(
     source: AgentHookSource,
     body: unknown,
+    isReplay = false,
+    receivedAt?: number
+  ): NormalizedLocalHook {
+    const normalized = this.normalizeLocalHookPayloadCore(source, body, isReplay)
+    observeMemorialCursorHook(source, body, normalized.event, { isReplay, receivedAt })
+    return normalized
+  }
+
+  private normalizeLocalHookPayloadCore(
+    source: AgentHookSource,
+    body: unknown,
     isReplay = false
   ): NormalizedLocalHook {
     if (source !== 'claude' || typeof body !== 'object' || body === null) {
@@ -202,7 +214,7 @@ export abstract class AgentHookServerIngestNormalization extends AgentHookServer
     if (!isAgentHookSource(record.source)) {
       return
     }
-    const normalized = this.normalizeLocalHookPayload(record.source, body, true)
+    const normalized = this.normalizeLocalHookPayload(record.source, body, true, record.receivedAt)
     if (!normalized.event) {
       return
     }

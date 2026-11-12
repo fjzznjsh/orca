@@ -1,0 +1,138 @@
+[
+  {
+    "event": {
+      "kind": "beforeSubmitPrompt",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390291316,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"prompt\":\"Run exactly one shell command: echo memorial-m1-ok. Then stop.\",\"attachments\":[],\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"beforeSubmitPrompt\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "preToolUse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390302349,
+      "isReplay": false,
+      "command": "echo memorial-m1-ok"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"tool_name\":\"Shell\",\"tool_input\":{\"command\":\"echo memorial-m1-ok\",\"cwd\":\"\",\"timeout\":30000},\"tool_use_id\":\"f8611a6b-807b-4ac0-9c4c-4ba1c6421ab5\",\"cwd\":\"\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"preToolUse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "beforeShellExecution",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390302699,
+      "isReplay": false,
+      "command": "echo memorial-m1-ok"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"command\":\"echo memorial-m1-ok\",\"cwd\":\"\",\"sandbox\":false,\"tool_use_id\":\"f8611a6b-807b-4ac0-9c4c-4ba1c6421ab5\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"beforeShellExecution\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "postToolUse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390306656,
+      "isReplay": false,
+      "command": "echo memorial-m1-ok"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"tool_name\":\"Shell\",\"tool_input\":{\"command\":\"echo memorial-m1-ok\",\"cwd\":\"\",\"timeout\":30000},\"tool_output\":\"{\\\"output\\\":\\\"memorial-m1-ok\\\\n\\\",\\\"exitCode\\\":0}\",\"duration\":3072.906,\"tool_use_id\":\"f8611a6b-807b-4ac0-9c4c-4ba1c6421ab5\",\"cwd\":\"\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"postToolUse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "afterAgentResponse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390308899,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"text\":\"> Auto routed to Grok 4.7\\n\\n我会只执行这一条命令，然后停止。`memorial-m1-ok`\",\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"afterAgentResponse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "stop",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "43716027-3d6b-4547-a37f-2a31ef65402e",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390308908,
+      "isReplay": false,
+      "status": "completed"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"43716027-3d6b-4547-a37f-2a31ef65402e\",\"model\":\"auto-smart\",\"status\":\"completed\",\"loop_count\":0,\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"stop\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  }
+]

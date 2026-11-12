@@ -1,0 +1,115 @@
+[
+  {
+    "event": {
+      "kind": "beforeSubmitPrompt",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390421249,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa\",\"model\":\"auto-smart\",\"prompt\":\"Read the file /tmp/memorial-m1-fixture/does-not-exist.txt with the Read tool. Do not create it and do not run a shell command.\",\"attachments\":[],\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"beforeSubmitPrompt\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "preToolUse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390424885,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa\",\"model\":\"auto-smart\",\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"/tmp/memorial-m1-fixture/does-not-exist.txt\"},\"tool_use_id\":\"0_tool_5d461db0-8872-4596-9b99-05688d92c\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"preToolUse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "postToolUseFailure",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390425142,
+      "isReplay": false,
+      "failureType": "error",
+      "errorMessage": "File not found: /tmp/memorial-m1-fixture/does-not-exist.txt"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa\",\"model\":\"auto-smart\",\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"/tmp/memorial-m1-fixture/does-not-exist.txt\"},\"error_message\":\"File not found: /tmp/memorial-m1-fixture/does-not-exist.txt\",\"failure_type\":\"error\",\"duration\":3.107,\"tool_use_id\":\"0_tool_5d461db0-8872-4596-9b99-05688d92c\",\"is_interrupt\":false,\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"postToolUseFailure\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "afterAgentResponse",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": false,
+      "generationId": "6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390428533,
+      "isReplay": false
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa\",\"model\":\"auto-smart\",\"text\":\"> Auto routed to Gemini 3.8 Flash\\n\\n读取失败：文件 `/tmp/memorial-m1-fixture/does-not-exist.txt` 不存在（File not found）。\",\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"afterAgentResponse\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  },
+  {
+    "event": {
+      "kind": "stop",
+      "conversationId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b",
+      "conversationIdTrusted": true,
+      "generationId": "6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa",
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "receivedAt": 1794390428536,
+      "isReplay": false,
+      "status": "completed"
+    },
+    "raw": {
+      "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
+      "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
+      "launchToken": "[redacted]",
+      "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
+      "env": "development",
+      "version": "1",
+      "payload": "{\"conversation_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"generation_id\":\"6215fb8d-ed64-49d4-b4b9-dec2c62ab1aa\",\"model\":\"auto-smart\",\"status\":\"completed\",\"loop_count\":0,\"input_tokens\":\"[redacted]\",\"output_tokens\":\"[redacted]\",\"cache_read_tokens\":\"[redacted]\",\"cache_write_tokens\":\"[redacted]\",\"session_id\":\"d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b\",\"hook_event_name\":\"stop\",\"cursor_version\":\"2026.11.10-731fb78\",\"workspace_roots\":[\"/tmp/memorial-m1-fixture\"],\"user_email\":\"[redacted]\",\"transcript_path\":\"[redacted]\"}"
+    }
+  }
+]

@@ -1,0 +1,129 @@
+[
+  {
+    "event": {
+      "kind": "preToolUse",
+      "conversationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "conversationIdTrusted": false,
+      "generationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "paneKey": "memorial-replay-pane",
+      "worktreeId": "memorial-replay-wt",
+      "tabId": "memorial-replay-tab",
+      "receivedAt": 1794390690000,
+      "isReplay": true,
+      "command": "echo memorial-replay-offline"
+    },
+    "raw": {
+      "paneKey": "memorial-replay-pane",
+      "tabId": "memorial-replay-tab",
+      "worktreeId": "memorial-replay-wt",
+      "env": "development",
+      "version": "1",
+      "launchToken": "[redacted]",
+      "agentProcess": "",
+      "tmuxPane": "",
+      "payload": {
+        "conversation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "generation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "model": "auto-smart",
+        "tool_name": "Shell",
+        "tool_input": {
+          "command": "echo memorial-replay-offline",
+          "cwd": "",
+          "timeout": 30000
+        },
+        "tool_use_id": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+        "cwd": "",
+        "session_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "hook_event_name": "preToolUse",
+        "cursor_version": "2026.11.11-043ef28",
+        "workspace_roots": ["/tmp/memorial-m1-fixture"],
+        "user_email": "[redacted]",
+        "transcript_path": "[redacted]"
+      }
+    }
+  },
+  {
+    "event": {
+      "kind": "beforeShellExecution",
+      "conversationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "conversationIdTrusted": false,
+      "generationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "paneKey": "memorial-replay-pane",
+      "worktreeId": "memorial-replay-wt",
+      "tabId": "memorial-replay-tab",
+      "receivedAt": 1794390690000,
+      "isReplay": true,
+      "command": "echo memorial-replay-offline"
+    },
+    "raw": {
+      "paneKey": "memorial-replay-pane",
+      "tabId": "memorial-replay-tab",
+      "worktreeId": "memorial-replay-wt",
+      "env": "development",
+      "version": "1",
+      "launchToken": "[redacted]",
+      "agentProcess": "",
+      "tmuxPane": "",
+      "payload": {
+        "conversation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "generation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "model": "auto-smart",
+        "command": "echo memorial-replay-offline",
+        "cwd": "",
+        "sandbox": false,
+        "tool_use_id": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+        "session_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "hook_event_name": "beforeShellExecution",
+        "cursor_version": "2026.11.11-043ef28",
+        "workspace_roots": ["/tmp/memorial-m1-fixture"],
+        "user_email": "[redacted]",
+        "transcript_path": "[redacted]"
+      }
+    }
+  },
+  {
+    "event": {
+      "kind": "postToolUse",
+      "conversationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "conversationIdTrusted": false,
+      "generationId": "214cb747-cd5e-4116-9940-56800fb8fb63",
+      "paneKey": "memorial-replay-pane",
+      "worktreeId": "memorial-replay-wt",
+      "tabId": "memorial-replay-tab",
+      "receivedAt": 1794390692000,
+      "isReplay": true,
+      "command": "echo memorial-replay-offline"
+    },
+    "raw": {
+      "paneKey": "memorial-replay-pane",
+      "tabId": "memorial-replay-tab",
+      "worktreeId": "memorial-replay-wt",
+      "env": "development",
+      "version": "1",
+      "launchToken": "[redacted]",
+      "agentProcess": "",
+      "tmuxPane": "",
+      "payload": {
+        "conversation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "generation_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "model": "auto-smart",
+        "tool_name": "Shell",
+        "tool_input": {
+          "command": "echo memorial-replay-offline",
+          "cwd": "",
+          "timeout": 30000
+        },
+        "tool_output": "{\"output\":\"memorial-replay-offline\\n\",\"exitCode\":0}",
+        "duration": 1554.115,
+        "tool_use_id": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+        "cwd": "",
+        "session_id": "214cb747-cd5e-4116-9940-56800fb8fb63",
+        "hook_event_name": "postToolUse",
+        "cursor_version": "2026.11.11-043ef28",
+        "workspace_roots": ["/tmp/memorial-m1-fixture"],
+        "user_email": "[redacted]",
+        "transcript_path": "[redacted]"
+      }
+    }
+  }
+]
