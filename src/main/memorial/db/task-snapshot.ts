@@ -92,13 +92,28 @@ export function deserializeRuntime(runtimeJson: string | null | undefined): Task
   }
 }
 
+const HOOK_OUTPUT_LIMIT = 4000
+const HOOK_COMMAND_LIMIT = 2000
+
+function clip(value: string, limit: number): string {
+  return value.length <= limit ? value : value.slice(0, limit)
+}
+
+function clipMarked(value: string, limit: number): string {
+  if (value.length <= limit) {
+    return value
+  }
+  const removed = value.length - limit
+  return `${value.slice(0, limit)}…[truncated ${removed} chars]`
+}
+
 export function hookSummary(event: MemorialHookEvent): Record<string, unknown> {
   return {
     kind: event.kind,
     conversationId: event.conversationId,
     generationId: event.generationId,
-    command: event.command ?? null,
-    output: event.toolOutput ?? null,
+    command: event.command === undefined ? null : clip(event.command, HOOK_COMMAND_LIMIT),
+    output: event.toolOutput === undefined ? null : clipMarked(event.toolOutput, HOOK_OUTPUT_LIMIT),
     exitCode: event.exitCode ?? null,
     durationMs: event.durationMs ?? null,
     toolUseId: event.toolUseId ?? null,
@@ -107,7 +122,8 @@ export function hookSummary(event: MemorialHookEvent): Record<string, unknown> {
     status: event.status ?? null,
     errorMessage: event.errorMessage ?? null,
     isInterrupt: event.isInterrupt ?? null,
-    responseText: event.responseText ?? null
+    responseText:
+      event.responseText === undefined ? null : clipMarked(event.responseText, HOOK_OUTPUT_LIMIT)
   }
 }
 

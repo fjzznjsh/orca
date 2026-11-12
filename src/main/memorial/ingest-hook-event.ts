@@ -14,7 +14,7 @@ export function ingestHookEvent(store: MemorialStore, event: MemorialHookEvent):
     )
   const stored = matched.find((item) => item.runtime.generations[event.generationId]) ?? matched[0]
   if (!stored) {
-    store.commitIngest({ event, hookTaskId: null, saved: null, domainEvents: [] })
+    store.stagePending(event)
     return
   }
   const folded = foldHookEvent(stored.task, stored.runtime, event)

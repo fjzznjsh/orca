@@ -54,3 +54,29 @@ export const HOOK_EVENTS_TABLE_SQL = `
     summaryJson TEXT NOT NULL
   )
 `
+
+/** Short-lived hooks for panes that are not bound to a task yet. No command output or reply text. */
+export const PENDING_HOOK_EVENTS_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS pending_hook_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    identity TEXT NOT NULL UNIQUE,
+    paneKey TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    conversationId TEXT NOT NULL,
+    conversationIdTrusted INTEGER NOT NULL,
+    generationId TEXT NOT NULL,
+    worktreeId TEXT NOT NULL,
+    tabId TEXT NOT NULL,
+    launchToken TEXT NOT NULL,
+    receivedAt INTEGER NOT NULL,
+    isReplay INTEGER NOT NULL,
+    status TEXT,
+    failureType TEXT,
+    isInterrupt INTEGER,
+    toolUseId TEXT,
+    toolName TEXT,
+    durationMs INTEGER,
+    exitCode INTEGER,
+    command TEXT
+  )
+`

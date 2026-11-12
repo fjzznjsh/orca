@@ -8,6 +8,7 @@ import { TaskApplicationService } from './task-service'
 export const MEMORIAL_KERNEL_QUEUE_LIMIT = 5000
 const DROP_WARNING_INTERVAL_MS = 60_000
 const OPEN_RETRY_MAX_MS = 30_000
+const PRUNE_INTERVAL_MS = 60_000
 const DEFAULT_STOP_BUDGET_MS = 2_000
 const DEFAULT_OPEN_RETRY_MS = 1_000
 
@@ -17,6 +18,7 @@ type KernelPhase = 'idle' | 'starting' | 'running' | 'degraded' | 'stopping' | '
 
 type KernelDatabase = {
   ingestHookEvent(event: MemorialHookEvent): void
+  prunePendingHooks?(now: number): void
   close(): void
 }
 
@@ -37,6 +39,7 @@ let retryDelayMs = DEFAULT_OPEN_RETRY_MS
 let initialRetryMs = DEFAULT_OPEN_RETRY_MS
 let stopDeadline: number | null = null
 let retryTimer: ReturnType<typeof setTimeout> | null = null
+let pruneTimer: ReturnType<typeof setTimeout> | null = null
 let lastDropWarningAt = 0
 let tail: Promise<void> = Promise.resolve()
 
@@ -50,10 +53,14 @@ function vitestSkipsKernel(): boolean {
 
 async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase> {
   const db = await openMemorialDatabase(directory)
-  const service = new TaskApplicationService(new MemorialStore(db), systemClock)
+  const store = new MemorialStore(db)
+  const service = new TaskApplicationService(store, systemClock)
   return {
     ingestHookEvent(event) {
       service.ingestHookEvent(event)
+    },
+    prunePendingHooks(now) {
+      store.prunePending(now)
     },
     close() {
       db.close()
@@ -75,6 +82,28 @@ function clearRetryTimer(): void {
     clearTimeout(retryTimer)
     retryTimer = null
   }
+}
+
+function clearPruneTimer(): void {
+  if (pruneTimer) {
+    clearTimeout(pruneTimer)
+    pruneTimer = null
+  }
+}
+
+function armPruneTimer(active: KernelDatabase): void {
+  clearPruneTimer()
+  pruneTimer = setTimeout(() => {
+    pruneTimer = null
+    try {
+      active.prunePendingHooks?.(Date.now())
+    } catch (error) {
+      console.error('[memorial] pending hook prune failed', error)
+    }
+    if (phase === 'running') {
+      armPruneTimer(active)
+    }
+  }, PRUNE_INTERVAL_MS)
 }
 
 function warnQueueDrop(): void {
@@ -116,8 +145,10 @@ async function ensureDatabase(): Promise<KernelDatabase | null> {
     }
     database = opened
     retryDelayMs = initialRetryMs
+    opened.prunePendingHooks?.(Date.now())
     if (phase !== 'stopping') {
       phase = 'running'
+      armPruneTimer(opened)
     }
     console.log(`[memorial] task kernel started: ${join(directory, MEMORIAL_DATABASE_FILE)}`)
     return opened
@@ -195,6 +226,7 @@ export function startMemorialKernel(options: MemorialKernelOptions): void {
 /** Tests only. Stop rejects new events; this puts the singleton back to the pre-start state. */
 export function resetMemorialKernelForTests(): void {
   clearRetryTimer()
+  clearPruneTimer()
   queue.length = 0
   database = null
   userDataPath = null
@@ -209,6 +241,7 @@ export function memorialKernelPhaseForTests(): KernelPhase {
 /** Stops new events, drains the queue for up to two seconds, then closes the database. */
 export async function stopMemorialKernel(): Promise<void> {
   clearRetryTimer()
+  clearPruneTimer()
   if (phase === 'idle' || phase === 'stopped') {
     queue.length = 0
     return

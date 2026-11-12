@@ -43,9 +43,9 @@ describe('task kernel lifecycle', () => {
   })
 
   afterEach(async () => {
-    vi.useRealTimers()
     await stopMemorialKernel()
     resetMemorialKernelForTests()
+    vi.useRealTimers()
     if (previousKernelFlag === undefined) {
       delete process.env.MEMORIAL_TASK_KERNEL
     } else {
@@ -211,5 +211,29 @@ describe('task kernel lifecycle', () => {
     expect(console.log).toHaveBeenCalledWith(
       `[memorial] task kernel started: ${join('memorial-kernel', MEMORIAL_DATABASE_FILE)}`
     )
+  })
+
+  it('prunes pending hooks when the database opens and again after a minute', async () => {
+    vi.useFakeTimers()
+    const pruned: number[] = []
+    startMemorialKernel({
+      userDataPath: 'memorial-kernel',
+      openDatabase: async () => ({
+        ingestHookEvent() {
+          return undefined
+        },
+        prunePendingHooks(now) {
+          pruned.push(now)
+        },
+        close() {
+          closed = true
+        }
+      })
+    })
+    await vi.waitFor(() => {
+      expect(pruned).toHaveLength(1)
+    })
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(pruned).toHaveLength(2)
   })
 })

@@ -7,6 +7,13 @@ import type { Task } from '../../../shared/memorial/task'
 import type { TaskEvent } from '../../../shared/memorial/task-events'
 import type SyncDatabase from '../../sqlite/sync-database'
 import {
+  deletePendingHook,
+  listPendingHooks,
+  pendingHookTtlMs,
+  prunePendingHooks,
+  stagePendingHook
+} from './pending-hooks'
+import {
   hookSummary,
   readBlock,
   readEvent,
@@ -174,6 +181,22 @@ export class MemorialStore {
       this.db.prepare('SELECT identity FROM hook_events WHERE identity = ?').get(identity) !==
       undefined
     )
+  }
+
+  stagePending(event: MemorialHookEvent, now = Date.now()): void {
+    stagePendingHook(this.db, event, now, pendingHookTtlMs())
+  }
+
+  listPending(paneKey: string, now = Date.now()): MemorialHookEvent[] {
+    return listPendingHooks(this.db, paneKey, now, pendingHookTtlMs())
+  }
+
+  deletePending(identity: string): void {
+    deletePendingHook(this.db, identity)
+  }
+
+  prunePending(now = Date.now()): void {
+    prunePendingHooks(this.db, now, pendingHookTtlMs())
   }
 
   listHookEvidence(taskId: string): HookEvidence[] {
