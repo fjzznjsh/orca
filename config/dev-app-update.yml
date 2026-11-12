@@ -1,4 +1,1 @@
-provider: github
-owner: stablyai
-repo: orca
-updaterCacheDirName: orca-updater
+# Memorial fork: no update feed. Do not point this file at stablyai or any other publisher.

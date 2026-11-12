@@ -115,6 +115,9 @@ const handleMacAppActivation = createMacAppActivationHandler({
   requestActivation: requestDesktopActivation
 })
 
+// Memorial fork never follows the official update feed. Set before any updater setup.
+process.env.MEMORIAL_DISABLE_UPDATES = '1'
+
 // Before anything spawns: no child may inherit Orca's std handles.
 clearWindowsStdHandleInheritance()
 installWindowsIsolatedSpawner()

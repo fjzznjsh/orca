@@ -24,6 +24,10 @@ import { handleElectronUpdaterProxyLogin } from './electron-updater-proxy-sessio
 import { resolveWindowsUpdateInstallDirectory } from './windows-update-install-directory'
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater-state'
 
+function memorialUpdatesDisabled(): boolean {
+  return process.env.MEMORIAL_DISABLE_UPDATES === '1'
+}
+
 export type UpdaterSetupOptions = {
   getMainWindow?: () => BrowserWindow | null
   getLastUpdateCheckAt?: () => number | null
@@ -41,18 +45,30 @@ export type UpdaterSetupOptions = {
 
 export class UpdaterSetup extends UpdaterDownloadInstall {
   checkForUpdates(): void {
+    if (memorialUpdatesDisabled()) {
+      return
+    }
     this.checkForUpdatesInBackground()
   }
 
   checkForUpdatesFromMenu(options?: UpdateCheckOptions): void {
+    if (memorialUpdatesDisabled()) {
+      return
+    }
     super.checkForUpdatesFromMenu(options)
   }
 
   downloadUpdate(): void {
+    if (memorialUpdatesDisabled()) {
+      return
+    }
     super.downloadUpdate()
   }
 
   quitAndInstall(): void {
+    if (memorialUpdatesDisabled()) {
+      return
+    }
     super.quitAndInstall()
   }
 
@@ -76,14 +92,23 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
     runtimeId: string,
     options?: UpdateCheckOptions
   ): RemoteServerUpdaterSnapshot {
+    if (memorialUpdatesDisabled()) {
+      return this.getRemoteServerUpdaterSnapshot(runtimeId)
+    }
     return super.checkForRemoteServerUpdate(runtimeId, options)
   }
 
   downloadRemoteServerUpdate(runtimeId: string): RemoteServerUpdaterSnapshot {
+    if (memorialUpdatesDisabled()) {
+      return this.getRemoteServerUpdaterSnapshot(runtimeId)
+    }
     return super.downloadRemoteServerUpdate(runtimeId)
   }
 
   installRemoteServerUpdate(runtimeId: string): RemoteServerUpdateInstallResult {
+    if (memorialUpdatesDisabled()) {
+      throw new Error('Memorial fork does not install updates')
+    }
     return super.installRemoteServerUpdate(runtimeId)
   }
 
@@ -103,6 +128,9 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
     channel: ReleaseChannel,
     options?: ReleaseBuildListOptions
   ): Promise<ReleaseBuild[]> {
+    if (memorialUpdatesDisabled()) {
+      return []
+    }
     return super.listAvailableReleaseBuilds(channel, options)
   }
 
@@ -140,7 +168,7 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
       this.sendErrorStatus(`The server update did not complete: ${serveHandoffFailure}`, true)
     }
 
-    if (!app.isPackaged) {
+    if (memorialUpdatesDisabled() || !app.isPackaged) {
       return
     }
 
