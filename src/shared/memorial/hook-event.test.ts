@@ -295,6 +295,16 @@ describe('captured cursor hook payloads', () => {
     expect(prompt?.durationMs).toBeUndefined()
   })
 
+  it('reads shell output and exit code from postToolUse tool_output', () => {
+    const posted = loadCapturedHooks('shell-ok.json')
+      .map(projectCaptured)
+      .find((captured) => captured.kind === 'postToolUse')
+    expect(posted?.command).toBe('echo memorial-m1-ok')
+    expect(posted?.toolOutput).toBe('memorial-m1-ok\n')
+    expect(posted?.exitCode).toBe(0)
+    expect(posted?.durationMs).toBe(3072.906)
+  })
+
   it('keeps aborted ahead of error in the interrupt capture', () => {
     const stops = loadCapturedHooks('interrupt.json')
       .map(projectCaptured)

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import { readCommandEvidence } from './hook-command-evidence'
 
 /** Cursor events this fork records. Session hooks stay out: they reset Orca's submitted-turn cache. */
 export const MEMORIAL_CURSOR_EVENT_NAMES = [
@@ -43,6 +44,12 @@ export type MemorialHookEvent = {
   durationMs?: number
   /** Payload `session_id`. */
   sessionId?: string
+  /** Parsed `tool_output.output` from postToolUse. */
+  toolOutput?: string
+  /** Parsed `tool_output.exitCode`. `0` is kept. */
+  exitCode?: number
+  /** `afterAgentResponse` payload `text`. */
+  responseText?: string
   payloadParseError?: true
 }
 
@@ -113,6 +120,9 @@ export function projectMemorialHookEvent(input: {
   const isInterrupt = record ? readBoolean(record, 'is_interrupt') : undefined
   const durationMs = record ? readDurationMs(record.duration) : undefined
   const sessionId = record ? readString(record, 'session_id') : undefined
+  const commandEvidence = record ? readCommandEvidence(record) : undefined
+  const responseText =
+    record && kind === 'afterAgentResponse' ? readString(record, 'text') : undefined
   const fromPayload = record ? readString(record, 'conversation_id') : undefined
   const conversationId = fromPayload ?? input.providerConversationId ?? ''
   const generationId = record ? (readString(record, 'generation_id') ?? '') : ''
@@ -161,6 +171,15 @@ export function projectMemorialHookEvent(input: {
   }
   if (sessionId !== undefined) {
     event.sessionId = sessionId
+  }
+  if (commandEvidence?.output !== undefined) {
+    event.toolOutput = commandEvidence.output
+  }
+  if (commandEvidence?.exitCode !== undefined) {
+    event.exitCode = commandEvidence.exitCode
+  }
+  if (responseText !== undefined) {
+    event.responseText = responseText
   }
   if (parsed.parseError) {
     event.payloadParseError = true
