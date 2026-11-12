@@ -3,7 +3,24 @@ import { emptyRuntime, type TaskRuntime } from '../../../shared/memorial/hook-ta
 import type { MemorialHookEvent } from '../../../shared/memorial/hook-event'
 import type { PersistedTaskEvent } from '../../../shared/memorial/ports'
 import type { Task } from '../../../shared/memorial/task'
-import type { TaskEvent } from '../../../shared/memorial/task-events'
+import { readTaskEvent } from './stored-event'
+import {
+  isRecord,
+  optionalString,
+  readAttention,
+  readAttentionLevel,
+  readBinding,
+  readDisposition,
+  readExecution,
+  readGenerations,
+  readReplyState,
+  readReview,
+  readRunOutcome,
+  readSummary,
+  readTaskType,
+  readWaitingFor,
+  requiredString
+} from './task-field'
 
 export type StoredTask = { task: Task; runtime: TaskRuntime }
 
@@ -27,17 +44,32 @@ export function deserializeTask(snapshotJson: string): Task {
   if (!isRecord(parsed) || typeof parsed.id !== 'string') {
     throw new Error('Stored task snapshot is not a task')
   }
-  const task = parsed as Task
   return {
-    ...task,
-    binding: task.binding ?? null,
-    lastActivityAt: task.lastActivityAt ?? null,
-    agentReply: task.agentReply ?? null,
-    roundDenied: task.roundDenied ?? false,
-    runOutcome: task.runOutcome ?? null,
-    recoveryHint: task.recoveryHint ?? null,
-    cancelRequested: task.cancelRequested ?? false,
-    replyState: task.replyState ?? 'none'
+    id: parsed.id,
+    title: requiredString(parsed, 'title'),
+    type: readTaskType(parsed.type),
+    attentionLevel: readAttentionLevel(parsed.attentionLevel),
+    workspaceId: requiredString(parsed, 'workspaceId'),
+    executionStatus: readExecution(parsed.executionStatus),
+    attentionStatus: readAttention(parsed.attentionStatus),
+    reviewStatus: readReview(parsed.reviewStatus),
+    disposition: readDisposition(parsed.disposition),
+    agentId: optionalString(parsed.agentId),
+    currentRunId: optionalString(parsed.currentRunId),
+    summary: typeof parsed.summary === 'string' ? parsed.summary : '',
+    nextHumanAction: optionalString(parsed.nextHumanAction),
+    blockedDurationMs: typeof parsed.blockedDurationMs === 'number' ? parsed.blockedDurationMs : 0,
+    createdAt: requiredString(parsed, 'createdAt'),
+    updatedAt: requiredString(parsed, 'updatedAt'),
+    version: typeof parsed.version === 'number' ? parsed.version : 1,
+    binding: readBinding(parsed.binding),
+    lastActivityAt: optionalString(parsed.lastActivityAt),
+    agentReply: optionalString(parsed.agentReply),
+    roundDenied: parsed.roundDenied === true,
+    runOutcome: readRunOutcome(parsed.runOutcome),
+    recoveryHint: optionalString(parsed.recoveryHint),
+    cancelRequested: parsed.cancelRequested === true,
+    replyState: readReplyState(parsed.replyState)
   }
 }
 
@@ -54,7 +86,7 @@ export function deserializeRuntime(runtimeJson: string | null | undefined): Task
     if (!isRecord(parsed) || !isRecord(parsed.generations)) {
       return emptyRuntime()
     }
-    return parsed as TaskRuntime
+    return { generations: readGenerations(parsed.generations) }
   } catch {
     return emptyRuntime()
   }
@@ -91,7 +123,7 @@ export function readEvent(row: Record<string, unknown>): PersistedTaskEvent {
     sequence: Number(row.sequence),
     taskId: String(row.taskId),
     version: Number(row.taskVersion),
-    event: JSON.parse(String(row.payloadJson)) as TaskEvent
+    event: readTaskEvent(String(row.payloadJson))
   }
 }
 
@@ -99,7 +131,7 @@ export function readBlock(row: Record<string, unknown>): BlockInterval {
   return {
     id: String(row.id),
     taskId: String(row.taskId),
-    waitingFor: String(row.waitingFor) as BlockInterval['waitingFor'],
+    waitingFor: readWaitingFor(row.waitingFor),
     reason: String(row.reason),
     unlockCondition: String(row.unlockCondition),
     reviewAt: row.reviewAt == null ? null : String(row.reviewAt),
@@ -117,10 +149,6 @@ export function readHook(row: Record<string, unknown>): HookEvidence {
     kind: String(row.kind),
     receivedAt: Number(row.receivedAt),
     isReplay: Number(row.isReplay) === 1,
-    summary: JSON.parse(String(row.summaryJson)) as Record<string, unknown>
+    summary: readSummary(row.summaryJson)
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }

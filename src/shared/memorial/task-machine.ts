@@ -1,6 +1,6 @@
 import type { TaskEvent } from './task-events'
 import type { AttentionLevel, Task, TaskType } from './task'
-import { applyHookDomainEvent, isIgnoredRunStop } from './task-hook-transition'
+import { applyHookDomainEvent, isHookDomainEvent, isIgnoredRunStop } from './task-hook-transition'
 
 type CreateTaskInput = {
   id: string
@@ -58,9 +58,8 @@ export function applyTaskEvent(task: Task, event: TaskEvent): Task {
     updatedAt: event.at,
     version: task.version + 1
   }
-  const hooked = applyHookDomainEvent(next, event)
-  if (hooked) {
-    return hooked
+  if (isHookDomainEvent(event)) {
+    return applyHookDomainEvent(next, event)
   }
   switch (event.type) {
     case 'task.created':
@@ -134,8 +133,6 @@ export function applyTaskEvent(task: Task, event: TaskEvent): Task {
       }
     case 'task.reviewed':
       return { ...next, disposition: 'reviewed', attentionStatus: 'none' }
-    default:
-      return hooked ?? next
   }
 }
 

@@ -1,19 +1,65 @@
-import type { TaskEvent } from './task-events'
+import type {
+  GateRequestedEvent,
+  GateResolvedEvent,
+  ReplyConfirmedEvent,
+  ReplySentEvent,
+  ReplyUnconfirmedEvent,
+  RunStartedEvent,
+  RunStoppedEvent,
+  SessionLostEvent,
+  TaskBoundEvent,
+  TaskEvent,
+  ToolDeniedEvent,
+  ToolFailedEvent
+} from './task-events'
 import type { Task } from './task'
 
-const HOOK_EVENTS = new Set<TaskEvent['type']>([
-  'task_bound',
-  'run_started',
-  'run_stopped',
-  'tool_denied',
-  'tool_failed',
-  'gate_requested',
-  'gate_resolved',
-  'reply_sent',
-  'reply_confirmed',
-  'reply_unconfirmed',
-  'session_lost'
-])
+export type HookDomainEvent =
+  | TaskBoundEvent
+  | RunStartedEvent
+  | RunStoppedEvent
+  | ToolDeniedEvent
+  | ToolFailedEvent
+  | GateRequestedEvent
+  | GateResolvedEvent
+  | ReplySentEvent
+  | ReplyConfirmedEvent
+  | ReplyUnconfirmedEvent
+  | SessionLostEvent
+
+export function isHookDomainEvent(event: TaskEvent): event is HookDomainEvent {
+  switch (event.type) {
+    case 'task_bound':
+    case 'run_started':
+    case 'run_stopped':
+    case 'tool_denied':
+    case 'tool_failed':
+    case 'gate_requested':
+    case 'gate_resolved':
+    case 'reply_sent':
+    case 'reply_confirmed':
+    case 'reply_unconfirmed':
+    case 'session_lost':
+      return true
+    case 'task.created':
+    case 'task.started':
+    case 'run.completed':
+    case 'run.failed':
+    case 'run.start_failed':
+    case 'task.shelved':
+    case 'task.unshelved':
+    case 'task.cancelled':
+    case 'task.blocked':
+    case 'task.unblocked':
+    case 'task.archived':
+    case 'task.retitled':
+    case 'task.skipped':
+    case 'task.returned':
+    case 'task.observed':
+    case 'task.reviewed':
+      return false
+  }
+}
 
 /** stop(error) / stop(completed) after a user interrupt leave the task as it is. */
 export function isIgnoredRunStop(task: Task, event: TaskEvent): boolean {
@@ -24,11 +70,7 @@ export function isIgnoredRunStop(task: Task, event: TaskEvent): boolean {
   )
 }
 
-/** Returns null when `event` belongs to the older task lifecycle. */
-export function applyHookDomainEvent(next: Task, event: TaskEvent): Task | null {
-  if (!HOOK_EVENTS.has(event.type)) {
-    return null
-  }
+export function applyHookDomainEvent(next: Task, event: HookDomainEvent): Task {
   switch (event.type) {
     case 'task_bound':
       return { ...next, binding: event.binding }
@@ -69,8 +111,6 @@ export function applyHookDomainEvent(next: Task, event: TaskEvent): Task | null 
       return { ...next, replyState: 'unconfirmed' }
     case 'session_lost':
       return { ...next, attentionStatus: 'recovery_required', recoveryHint: event.hint }
-    default:
-      return null
   }
 }
 
