@@ -342,7 +342,7 @@ describe('task state machine', () => {
       status: 'failed'
     })
     expect(interrupted.runOutcome).toBe('interrupted')
-    expect(interrupted.executionStatus).not.toBe('failed')
+    expect(interrupted.executionStatus).toBe('waiting')
     expect(again).toBe(interrupted)
   })
 })

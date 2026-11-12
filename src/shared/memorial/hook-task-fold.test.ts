@@ -168,7 +168,7 @@ describe('hook task fold', () => {
       hook({ kind: 'stop', status: 'error', receivedAt: 3_000 })
     ])
     expect(folded.task.runOutcome).toBe('interrupted')
-    expect(folded.task.executionStatus).not.toBe('failed')
+    expect(folded.task.executionStatus).toBe('waiting')
     expect(folded.task.attentionStatus).toBe('recovery_required')
   })
 
@@ -180,7 +180,7 @@ describe('hook task fold', () => {
       hook({ kind: 'stop', status: 'aborted', receivedAt: 2_000 })
     ])
     expect(folded.task.runOutcome).toBe('interrupted')
-    expect(folded.task.executionStatus).not.toBe('failed')
+    expect(folded.task.executionStatus).toBe('waiting')
   })
 
   it('corrects stop(error) when isInterrupt arrives later', () => {
@@ -198,7 +198,7 @@ describe('hook task fold', () => {
       })
     ])
     expect(folded.task.runOutcome).toBe('interrupted')
-    expect(folded.task.executionStatus).not.toBe('failed')
+    expect(folded.task.executionStatus).toBe('waiting')
     expect(folded.types).not.toContain('tool_denied')
   })
 

@@ -54,6 +54,18 @@ describe('deriveDashboardGroup', () => {
     ).toBe('imperial-review')
   })
 
+  it('keeps a user interrupt in imperial-review when execution is waiting', () => {
+    expect(
+      deriveDashboardGroup({
+        ...base,
+        executionStatus: 'waiting',
+        attentionStatus: 'recovery_required',
+        currentRunId: null,
+        runOutcome: 'interrupted'
+      })
+    ).toBe('imperial-review')
+  })
+
   it('keeps waiting tasks in blocked', () => {
     expect(
       deriveDashboardGroup({

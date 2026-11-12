@@ -128,8 +128,8 @@ function applyRunStopped(next: Task, status: 'completed' | 'failed' | 'interrupt
     }
     return {
       ...next,
-      // Not `failed`: a user interrupt is recovery, even if an earlier error stop said otherwise.
-      executionStatus: 'running',
+      // A user interrupt waits for a person. There is no current run, so this is not `running`.
+      executionStatus: 'waiting',
       attentionStatus: 'recovery_required',
       currentRunId: null,
       runOutcome: 'interrupted',
