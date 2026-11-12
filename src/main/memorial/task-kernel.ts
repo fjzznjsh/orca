@@ -129,24 +129,29 @@ function scheduleOpenRetry(): void {
   }, delay)
 }
 
+function currentPhase(): KernelPhase {
+  return phase
+}
+
 async function ensureDatabase(): Promise<KernelDatabase | null> {
   if (database) {
     return database
   }
-  if (!userDataPath || phase === 'stopped') {
+  if (!userDataPath || currentPhase() === 'stopped') {
     return null
   }
   const directory = userDataPath
   try {
     const opened = await opener(directory)
-    if (phase === 'stopped' || (stopDeadline !== null && Date.now() >= stopDeadline)) {
+    const phaseNow = currentPhase()
+    if (phaseNow === 'stopped' || (stopDeadline !== null && Date.now() >= stopDeadline)) {
       opened.close()
       return null
     }
     database = opened
     retryDelayMs = initialRetryMs
     opened.prunePendingHooks?.(Date.now())
-    if (phase !== 'stopping') {
+    if (phaseNow !== 'stopping') {
       phase = 'running'
       armPruneTimer(opened)
     }
@@ -154,7 +159,8 @@ async function ensureDatabase(): Promise<KernelDatabase | null> {
     return opened
   } catch (error) {
     console.error('[memorial] task kernel database unavailable', error)
-    if (phase !== 'stopping' && phase !== 'stopped') {
+    const phaseNow = currentPhase()
+    if (phaseNow !== 'stopping' && phaseNow !== 'stopped') {
       phase = 'degraded'
       scheduleOpenRetry()
     }
