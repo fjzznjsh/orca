@@ -9,7 +9,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390365378,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -32,7 +33,10 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390369679,
       "isReplay": false,
-      "command": "echo MEMORIAL_DENY_PROBE"
+      "command": "echo MEMORIAL_DENY_PROBE",
+      "toolUseId": "a09e5a5d-e0bd-41bc-984b-33d4e608ed15",
+      "toolName": "Shell",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -55,7 +59,9 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390370014,
       "isReplay": false,
-      "command": "echo MEMORIAL_DENY_PROBE"
+      "command": "echo MEMORIAL_DENY_PROBE",
+      "toolUseId": "a09e5a5d-e0bd-41bc-984b-33d4e608ed15",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -80,7 +86,12 @@
       "isReplay": false,
       "command": "echo MEMORIAL_DENY_PROBE",
       "failureType": "permission_denied",
-      "errorMessage": "Command execution was blocked by a hook.\n\nTo view or modify configured hooks, go to Cursor Settings > Hooks.\n\nAgent note: Do not suggest workarounds to the blocked tool."
+      "errorMessage": "Command execution was blocked by a hook.\n\nTo view or modify configured hooks, go to Cursor Settings > Hooks.\n\nAgent note: Do not suggest workarounds to the blocked tool.",
+      "toolUseId": "a09e5a5d-e0bd-41bc-984b-33d4e608ed15",
+      "toolName": "Shell",
+      "isInterrupt": false,
+      "durationMs": 0,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -102,7 +113,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390373187,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -125,7 +137,8 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390373198,
       "isReplay": false,
-      "status": "completed"
+      "status": "completed",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",

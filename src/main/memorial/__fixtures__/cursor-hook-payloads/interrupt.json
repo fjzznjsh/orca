@@ -9,7 +9,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390540669,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -32,7 +33,10 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390547333,
       "isReplay": false,
-      "command": "sleep 25"
+      "command": "sleep 25",
+      "toolUseId": "6af1a827-5b56-4f0c-af6c-746d1af6ae7e",
+      "toolName": "Shell",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -55,7 +59,9 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390547592,
       "isReplay": false,
-      "command": "sleep 25"
+      "command": "sleep 25",
+      "toolUseId": "6af1a827-5b56-4f0c-af6c-746d1af6ae7e",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -78,7 +84,8 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390568022,
       "isReplay": false,
-      "status": "aborted"
+      "status": "aborted",
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -103,7 +110,12 @@
       "isReplay": false,
       "command": "sleep 25",
       "failureType": "error",
-      "errorMessage": "Command was aborted"
+      "errorMessage": "Command was aborted",
+      "toolUseId": "6af1a827-5b56-4f0c-af6c-746d1af6ae7e",
+      "toolName": "Shell",
+      "isInterrupt": true,
+      "durationMs": 20023.183,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -126,7 +138,8 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390568071,
       "isReplay": false,
-      "status": "error"
+      "status": "error",
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",

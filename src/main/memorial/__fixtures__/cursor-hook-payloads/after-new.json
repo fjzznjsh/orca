@@ -9,7 +9,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390493721,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -32,7 +33,10 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390497459,
       "isReplay": false,
-      "command": "echo memorial-after-new"
+      "command": "echo memorial-after-new",
+      "toolUseId": "b9dca6c6-49cc-4ef5-9b47-1fbab58534c1",
+      "toolName": "Shell",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -55,7 +59,9 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390497717,
       "isReplay": false,
-      "command": "echo memorial-after-new"
+      "command": "echo memorial-after-new",
+      "toolUseId": "b9dca6c6-49cc-4ef5-9b47-1fbab58534c1",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -78,7 +84,11 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390498201,
       "isReplay": false,
-      "command": "echo memorial-after-new"
+      "command": "echo memorial-after-new",
+      "toolUseId": "b9dca6c6-49cc-4ef5-9b47-1fbab58534c1",
+      "toolName": "Shell",
+      "durationMs": 209.959,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -100,7 +110,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390516006,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -123,7 +134,8 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390516010,
       "isReplay": false,
-      "status": "completed"
+      "status": "completed",
+      "sessionId": "c3e1f596-2f3e-416a-9e7d-4af50030485a"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",

@@ -10,7 +10,10 @@
       "tabId": "memorial-replay-tab",
       "receivedAt": 1794390690000,
       "isReplay": true,
-      "command": "echo memorial-replay-offline"
+      "command": "echo memorial-replay-offline",
+      "toolUseId": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+      "toolName": "Shell",
+      "sessionId": "214cb747-cd5e-4116-9940-56800fb8fb63"
     },
     "raw": {
       "paneKey": "memorial-replay-pane",
@@ -53,7 +56,9 @@
       "tabId": "memorial-replay-tab",
       "receivedAt": 1794390690000,
       "isReplay": true,
-      "command": "echo memorial-replay-offline"
+      "command": "echo memorial-replay-offline",
+      "toolUseId": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+      "sessionId": "214cb747-cd5e-4116-9940-56800fb8fb63"
     },
     "raw": {
       "paneKey": "memorial-replay-pane",
@@ -92,7 +97,11 @@
       "tabId": "memorial-replay-tab",
       "receivedAt": 1794390692000,
       "isReplay": true,
-      "command": "echo memorial-replay-offline"
+      "command": "echo memorial-replay-offline",
+      "toolUseId": "83af1820-9833-4e25-bb3d-81e9dde48dff",
+      "toolName": "Shell",
+      "durationMs": 1554.115,
+      "sessionId": "214cb747-cd5e-4116-9940-56800fb8fb63"
     },
     "raw": {
       "paneKey": "memorial-replay-pane",

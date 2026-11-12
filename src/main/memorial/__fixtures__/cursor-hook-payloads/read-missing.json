@@ -9,7 +9,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390421249,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -31,7 +32,10 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390424885,
-      "isReplay": false
+      "isReplay": false,
+      "toolUseId": "0_tool_5d461db0-8872-4596-9b99-05688d92c",
+      "toolName": "Read",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -55,7 +59,12 @@
       "receivedAt": 1794390425142,
       "isReplay": false,
       "failureType": "error",
-      "errorMessage": "File not found: /tmp/memorial-m1-fixture/does-not-exist.txt"
+      "errorMessage": "File not found: /tmp/memorial-m1-fixture/does-not-exist.txt",
+      "toolUseId": "0_tool_5d461db0-8872-4596-9b99-05688d92c",
+      "toolName": "Read",
+      "isInterrupt": false,
+      "durationMs": 3.107,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -77,7 +86,8 @@
       "worktreeId": "be8fe160-eb37-4058-b6da-4753bcf31421::/tmp/memorial-m1-fixture",
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390428533,
-      "isReplay": false
+      "isReplay": false,
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",
@@ -100,7 +110,8 @@
       "tabId": "f6b8fc8b-e795-4842-abb0-936012d48fbc",
       "receivedAt": 1794390428536,
       "isReplay": false,
-      "status": "completed"
+      "status": "completed",
+      "sessionId": "d8ca7e5b-cb0f-48e7-bf7c-ab48008c329b"
     },
     "raw": {
       "paneKey": "f6b8fc8b-e795-4842-abb0-936012d48fbc:07e9bfde-a7f9-4351-849e-34e662350d41",

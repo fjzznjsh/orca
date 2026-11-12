@@ -33,6 +33,16 @@ export type MemorialHookEvent = {
   status?: string
   failureType?: string
   errorMessage?: string
+  /** Payload `tool_use_id`. One call keeps the same id from preToolUse through post. */
+  toolUseId?: string
+  /** Payload `tool_name`. `beforeShellExecution` usually omits it. */
+  toolName?: string
+  /** Payload `is_interrupt`. Only present when the payload has a boolean. */
+  isInterrupt?: boolean
+  /** Payload `duration`, in milliseconds. `0` is kept. */
+  durationMs?: number
+  /** Payload `session_id`. */
+  sessionId?: string
   payloadParseError?: true
 }
 
@@ -98,6 +108,11 @@ export function projectMemorialHookEvent(input: {
   const errorMessage = record
     ? (readString(record, 'error_message') ?? readString(record, 'error'))
     : undefined
+  const toolUseId = record ? readString(record, 'tool_use_id') : undefined
+  const toolName = record ? readString(record, 'tool_name') : undefined
+  const isInterrupt = record ? readBoolean(record, 'is_interrupt') : undefined
+  const durationMs = record ? readDurationMs(record.duration) : undefined
+  const sessionId = record ? readString(record, 'session_id') : undefined
   const fromPayload = record ? readString(record, 'conversation_id') : undefined
   const conversationId = fromPayload ?? input.providerConversationId ?? ''
   const generationId = record ? (readString(record, 'generation_id') ?? '') : ''
@@ -132,6 +147,21 @@ export function projectMemorialHookEvent(input: {
   if (errorMessage !== undefined) {
     event.errorMessage = errorMessage
   }
+  if (toolUseId !== undefined) {
+    event.toolUseId = toolUseId
+  }
+  if (toolName !== undefined) {
+    event.toolName = toolName
+  }
+  if (isInterrupt !== undefined) {
+    event.isInterrupt = isInterrupt
+  }
+  if (durationMs !== undefined) {
+    event.durationMs = durationMs
+  }
+  if (sessionId !== undefined) {
+    event.sessionId = sessionId
+  }
   if (parsed.parseError) {
     event.payloadParseError = true
   }
@@ -143,7 +173,9 @@ function dedupeIdentity(event: MemorialHookEvent): string {
     event.conversationId,
     event.generationId,
     event.kind,
-    evidenceHash(event.command, event.status)
+    evidenceHash(event.command, event.status),
+    event.toolUseId ?? '',
+    event.failureType ?? ''
   ].join('\0')
 }
 
@@ -225,4 +257,25 @@ function readString(record: Record<string, unknown>, key: string): string | unde
   }
   const trimmed = value.trim()
   return trimmed.length > 0 ? trimmed : undefined
+}
+
+function readBoolean(record: Record<string, unknown>, key: string): boolean | undefined {
+  const value = record[key]
+  return typeof value === 'boolean' ? value : undefined
+}
+
+/** Payload `duration` is a millisecond number. Numeric strings are accepted; anything else is omitted. */
+function readDurationMs(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
+  }
+  if (typeof value !== 'string') {
+    return undefined
+  }
+  const trimmed = value.trim()
+  if (trimmed.length === 0) {
+    return undefined
+  }
+  const parsed = Number(trimmed)
+  return Number.isFinite(parsed) ? parsed : undefined
 }
