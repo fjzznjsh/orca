@@ -1,4 +1,4 @@
-import { appendFileSync, mkdirSync } from 'node:fs'
+import { appendFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { AgentHookEventPayload } from '../../shared/agent-hook-listener/listener-event'
 import {
@@ -10,6 +10,8 @@ import {
 const dedupe = createMemorialHookDedupe()
 const listeners = new Set<(event: MemorialHookEvent) => void>()
 const SECRET_KEY = /token|secret|password|authorization|api[-_]?key/i
+/** Keeps log lines in arrival order. Each write waits for the previous one. */
+let tail: Promise<void> = Promise.resolve()
 
 export function subscribeMemorialHookEvents(
   listener: (event: MemorialHookEvent) => void
@@ -59,14 +61,24 @@ function writeEventLog(event: MemorialHookEvent, body: unknown): void {
   if (!directory) {
     return
   }
-  mkdirSync(directory, { recursive: true })
-  const { launchToken: _launchToken, ...logged } = event
-  void _launchToken
-  appendFileSync(
-    join(directory, 'memorial-hook-events.jsonl'),
-    `${JSON.stringify({ event: logged, raw: redactSecrets(body) })}\n`,
-    'utf8'
-  )
+  let line: string
+  try {
+    const { launchToken: _launchToken, ...logged } = event
+    void _launchToken
+    line = `${JSON.stringify({ event: logged, raw: redactSecrets(body) })}\n`
+  } catch (error) {
+    console.error('[memorial] hook log failed', error)
+    return
+  }
+  const file = join(directory, 'memorial-hook-events.jsonl')
+  tail = tail
+    .then(async () => {
+      await mkdir(directory, { recursive: true })
+      await appendFile(file, line, 'utf8')
+    })
+    .catch((error: unknown) => {
+      console.error('[memorial] hook log failed', error)
+    })
 }
 
 function redactSecrets(value: unknown, depth = 0): unknown {
