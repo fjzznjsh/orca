@@ -191,4 +191,95 @@ describe('pending hook retention', () => {
     expect(count(again, 'SELECT COUNT(*) AS count FROM hook_events WHERE taskId IS NULL')).toBe(1)
     again.close()
   })
+
+  it('replays pending hooks in arrival order when the pane is bound', async () => {
+    const { app } = await opened()
+    const now = Date.now()
+    const task = app.createTask({
+      title: '先到的钩子',
+      type: 'other',
+      attentionLevel: 'S2',
+      workspaceId: 'workspace'
+    })
+    app.ingestHookEvent(
+      hook({
+        kind: 'stop',
+        conversationIdTrusted: true,
+        status: 'completed',
+        receivedAt: now + 2
+      })
+    )
+    app.ingestHookEvent(
+      hook({
+        kind: 'beforeSubmitPrompt',
+        conversationIdTrusted: true,
+        receivedAt: now + 1
+      })
+    )
+    const bound = app.bindTask({
+      taskId: task.id,
+      worktreeId: 'worktree',
+      repoId: 'repo',
+      paneKey: 'pane-a',
+      terminalHandle: 'term'
+    })
+    expect(bound.executionStatus).toBe('completed')
+    expect(bound.runOutcome).toBe('completed')
+    const types = app.listTaskEvents(task.id).map((item) => item.event.type)
+    expect(types.filter((type) => type === 'run_started')).toEqual(['run_started'])
+    expect(types).toContain('run_stopped')
+    const again = app.bindTask({
+      taskId: task.id,
+      worktreeId: 'worktree',
+      repoId: 'repo',
+      paneKey: 'pane-a',
+      terminalHandle: 'term'
+    })
+    expect(again.executionStatus).toBe('completed')
+    expect(
+      app.listTaskEvents(task.id).filter((item) => item.event.type === 'run_started')
+    ).toHaveLength(1)
+  })
+
+  it('does not replay an expired hook or another pane', async () => {
+    process.env.MEMORIAL_PENDING_TTL_MS = '5000'
+    const { app, db } = await opened()
+    const now = Date.now()
+    const task = app.createTask({
+      title: '过期',
+      type: 'other',
+      attentionLevel: 'S2',
+      workspaceId: 'workspace'
+    })
+    app.ingestHookEvent(
+      hook({
+        kind: 'beforeSubmitPrompt',
+        conversationIdTrusted: true,
+        receivedAt: now - 5_001,
+        generationId: 'stale'
+      })
+    )
+    app.ingestHookEvent(
+      hook({
+        paneKey: 'pane-b',
+        kind: 'beforeSubmitPrompt',
+        conversationIdTrusted: true,
+        receivedAt: now,
+        generationId: 'other'
+      })
+    )
+    const bound = app.bindTask({
+      taskId: task.id,
+      worktreeId: 'worktree',
+      repoId: 'repo',
+      paneKey: 'pane-a',
+      terminalHandle: 'term'
+    })
+    expect(bound.executionStatus).toBe('queued')
+    expect(app.listTaskEvents(task.id).some((item) => item.event.type === 'run_started')).toBe(
+      false
+    )
+    const other = new MemorialStore(db).listPending('pane-b', now)
+    expect(other.map((event) => event.generationId)).toEqual(['other'])
+  })
 })

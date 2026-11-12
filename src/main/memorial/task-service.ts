@@ -6,6 +6,7 @@ import {
   type BlockInterval
 } from '../../shared/memorial/block-interval'
 import { emptyRuntime } from '../../shared/memorial/hook-task-fold'
+import { memorialHookIdentity } from '../../shared/memorial/hook-identity'
 import type { MemorialHookEvent } from '../../shared/memorial/hook-event'
 import type { Clock, PersistedTaskEvent } from '../../shared/memorial/ports'
 import { isFastBatchCandidate, selectPresentation } from '../../shared/memorial/presentation'
@@ -87,7 +88,9 @@ export class TaskApplicationService {
       conversationId: null,
       launchToken: null
     }
-    return this.apply(input.taskId, { type: 'task_bound', at: this.clock.now(), binding })
+    this.apply(input.taskId, { type: 'task_bound', at: this.clock.now(), binding })
+    this.replayPending(input.paneKey)
+    return this.must(input.taskId).task
   }
 
   ingestHookEvent(event: MemorialHookEvent): void {
@@ -180,6 +183,19 @@ export class TaskApplicationService {
     const task = applyTaskEvent(stored.task, event)
     this.store.save(task, event, stored.task.version, stored.runtime)
     return task
+  }
+
+  /** Folds hooks that arrived before the pane was bound. A second bind sees an empty queue. */
+  private replayPending(paneKey: string): void {
+    const now = Date.now()
+    for (const event of this.store.listPending(paneKey, now)) {
+      try {
+        ingestHookEvent(this.store, event)
+        this.store.deletePending(memorialHookIdentity(event))
+      } catch (error) {
+        console.error('[memorial] pending hook replay failed', event.kind, event.paneKey, error)
+      }
+    }
   }
 
   private must(taskId: string) {
