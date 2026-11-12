@@ -45,6 +45,7 @@ import { registerOrcaProtocolClient } from './startup/orca-protocol-registration
 import { clearWindowsStdHandleInheritance } from './startup/windows-std-handle-inheritance'
 import { installWindowsIsolatedSpawner } from './startup/windows-isolated-spawner'
 import { dropE2eSpawnLogOutsideE2e } from './startup/e2e-spawn-log-env'
+import { startMemorialKernel, stopMemorialKernel } from './memorial/task-kernel'
 
 // Before anything spawns, so no daemon, PTY or agent inherits it outside e2e.
 dropE2eSpawnLogOutsideE2e()
@@ -172,6 +173,14 @@ if (preflightReady) {
   state.osOpenedDocuments.capture(process.argv)
   registerMainProcessIpcHandlers()
   installMainProcessQuitHandlers()
+  // userData is already set by preflight. Start before the hook server replays its spool.
+  const memorialUserDataPath = process.env.ORCA_USER_DATA_PATH
+  if (memorialUserDataPath) {
+    void startMemorialKernel({ userDataPath: memorialUserDataPath })
+  }
+  app.on('will-quit', () => {
+    void stopMemorialKernel()
+  })
   void app.whenReady().then(async () => {
     try {
       await initializeMainProcessReady({
