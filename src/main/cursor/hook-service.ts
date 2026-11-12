@@ -13,7 +13,6 @@ import {
   createManagedCommandMatcher,
   removeManagedCommands
 } from '../agent-hooks/installation/commands/managed-hook-command-matching'
-import { getSharedManagedScriptPath } from '../agent-hooks/installation/scripts/managed-hook-script-path'
 import { readHooksJson } from '../agent-hooks/installation/configuration/hooks-json-read'
 import { writeHooksJson } from '../agent-hooks/installation/configuration/hooks-json-write'
 import { writeManagedScript } from '../agent-hooks/installation/scripts/managed-hook-script-write'
@@ -24,18 +23,24 @@ import {
 } from '../agent-hooks/installation/configuration/hooks-json-remote'
 import { writeManagedScriptRemote } from '../agent-hooks/installation/scripts/managed-script-write-remote'
 import { CURSOR_EVENTS } from './hook-events'
-import { getManagedCommand, getManagedScript, getPosixManagedCommand } from './hook-script'
+import {
+  getManagedCommand,
+  getManagedScript,
+  getPosixManagedCommand,
+  MEMORIAL_CURSOR_HOOK_FILE_NAME
+} from './hook-script'
 
 function getConfigPath(): string {
   return join(homedir(), '.cursor', 'hooks.json')
 }
 
 function getManagedScriptFileName(): string {
-  return process.platform === 'win32' ? 'cursor-hook.cmd' : 'cursor-hook.sh'
+  return MEMORIAL_CURSOR_HOOK_FILE_NAME
 }
 
 function getManagedScriptPath(): string {
-  return getSharedManagedScriptPath(getManagedScriptFileName())
+  // Official Orca owns ~/.orca/agent-hooks. This fork must not write there.
+  return join(homedir(), '.memorial', 'agent-hooks', getManagedScriptFileName())
 }
 
 export class CursorHookService {
@@ -153,7 +158,7 @@ export class CursorHookService {
   // Remote installs must match local hook behavior while using POSIX paths.
   async installRemote(sftp: SFTPWrapper, remoteHome: string): Promise<AgentHookInstallStatus> {
     const remoteConfigPath = `${remoteHome.replace(/\/$/, '')}/.cursor/hooks.json`
-    const remoteScriptPath = `${remoteHome.replace(/\/$/, '')}/.orca/agent-hooks/cursor-hook.sh`
+    const remoteScriptPath = `${remoteHome.replace(/\/$/, '')}/.memorial/agent-hooks/memorial-cursor-hook.sh`
     try {
       const config = await readHooksJsonRemote(sftp, remoteConfigPath)
       if (!config) {
@@ -167,7 +172,7 @@ export class CursorHookService {
       }
 
       const nextHooks = { ...config.hooks }
-      const isManagedCommand = createManagedCommandMatcher('cursor-hook.sh')
+      const isManagedCommand = createManagedCommandMatcher('memorial-cursor-hook.sh')
 
       for (const eventName of CURSOR_EVENTS) {
         const command = getPosixManagedCommand(remoteScriptPath, eventName)

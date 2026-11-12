@@ -22,8 +22,9 @@ vi.mock('os', async () => {
 
 import { CursorHookService } from './hook-service'
 import { CURSOR_EVENTS, type CursorEvent } from './hook-events'
+import { MEMORIAL_CURSOR_HOOK_FILE_NAME } from './hook-script'
 
-const CURSOR_SCRIPT_FILE_NAME = process.platform === 'win32' ? 'cursor-hook.cmd' : 'cursor-hook.sh'
+const CURSOR_SCRIPT_FILE_NAME = MEMORIAL_CURSOR_HOOK_FILE_NAME
 const WINDOWS_POWERSHELL_LAUNCHER =
   /^[A-Za-z]:\/[^"]*\/System32\/WindowsPowerShell\/v1\.0\/powershell\.exe -NoProfile -EncodedCommand \S+$/
 
@@ -110,11 +111,13 @@ describe('CursorHookService', () => {
           hooks: {
             beforeSubmitPrompt: [
               { command: '/usr/local/bin/user-hook' },
-              { command: '/old/path/.orca/agent-hooks/cursor-hook.sh' }
+              { command: '/old/path/.orca/agent-hooks/cursor-hook.sh' },
+              { command: '/old/path/.memorial/agent-hooks/memorial-cursor-hook.sh' }
             ],
             retiredEvent: [
-              { command: '/old/path/.orca/agent-hooks/cursor-hook.sh' },
-              { command: '/usr/local/bin/retired-user-hook' }
+              { command: '/old/path/.memorial/agent-hooks/memorial-cursor-hook.sh' },
+              { command: '/usr/local/bin/retired-user-hook' },
+              { command: '/old/path/.orca/agent-hooks/cursor-hook.sh' }
             ]
           }
         },
@@ -130,6 +133,7 @@ describe('CursorHookService', () => {
     }
     const promptCommands = config.hooks.beforeSubmitPrompt.map((definition) => definition.command)
     expect(promptCommands).toContain('/usr/local/bin/user-hook')
+    expect(promptCommands).toContain('/old/path/.orca/agent-hooks/cursor-hook.sh')
     expect(
       promptCommands.filter((command) =>
         process.platform === 'win32'
@@ -138,7 +142,8 @@ describe('CursorHookService', () => {
       )
     ).toHaveLength(1)
     expect(config.hooks.retiredEvent.map((definition) => definition.command)).toEqual([
-      '/usr/local/bin/retired-user-hook'
+      '/usr/local/bin/retired-user-hook',
+      '/old/path/.orca/agent-hooks/cursor-hook.sh'
     ])
   })
 
@@ -176,7 +181,7 @@ describe('CursorHookService', () => {
       homedirMock.mockReturnValue(installHome)
       expect(new CursorHookService().install().state).toBe('installed')
       const config = readInstalledCursorHooks(installHome)
-      unlinkSync(join(installHome, '.orca', 'agent-hooks', CURSOR_SCRIPT_FILE_NAME))
+      unlinkSync(join(installHome, '.memorial', 'agent-hooks', CURSOR_SCRIPT_FILE_NAME))
 
       for (const eventName of CURSOR_EVENTS) {
         const command = requireRegisteredCommand(config, eventName)

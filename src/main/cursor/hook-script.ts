@@ -15,6 +15,10 @@ import {
 import { quoteStartupArg } from '../../shared/agent-launch/startup/tui-agent-startup-shell'
 import { getCursorHookResponse, type CursorEvent } from './hook-events'
 
+/** Distinct from official Orca's cursor-hook.sh so install() does not delete those entries. */
+export const MEMORIAL_CURSOR_HOOK_FILE_NAME =
+  process.platform === 'win32' ? 'memorial-cursor-hook.cmd' : 'memorial-cursor-hook.sh'
+
 const CURSOR_HOOK_RESPONSE_ENV = 'ORCA_CURSOR_HOOK_RESPONSE'
 
 export function getPosixManagedCommand(scriptPath: string, eventName: CursorEvent): string {

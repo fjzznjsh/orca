@@ -112,15 +112,7 @@ const devChannelBuildVersion = isHourlyChannel
     : isAdhocChannel
       ? process.env.ORCA_ADHOC_BUILD_VERSION
       : undefined
-// Separate dev-channel repos: 24 hourly tags/day would evict stable/RC from the ten-entry release feed; isolate adhoc/daily from hourly subscribers too.
-const devChannelRepo = isHourlyChannel
-  ? 'orca-hourly'
-  : isDailyChannel
-    ? 'orca-daily'
-    : isAdhocChannel
-      ? 'orca-adhoc'
-      : null
-const appId = 'com.stablyai.orca'
+const appId = 'com.memorial.desktop'
 const featureWallResources = {
   from: 'resources/onboarding/feature-wall',
   to: 'onboarding/feature-wall'
@@ -248,8 +240,7 @@ const ORCA_MAC_TEAM_ID = '6CX3WHS9HZ'
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId,
-  productName: 'Orca',
-  protocols: [{ name: 'Orca', schemes: ['orca'] }],
+  productName: 'Memorial',
   toolsets: { appimage: '1.0.3' },
   ...(devChannelBuildVersion
     ? { extraMetadata: { version: devChannelBuildVersion } }
@@ -763,13 +754,8 @@ module.exports = {
   // Dual-arch builds need target node-pty rebuilds or Intel Macs get arm64 binaries and posix_spawnp failure.
   // beforeBuild performs targeted rebuild then returns false to skip optional cpu-features.
   npmRebuild: true,
-  publish: {
-    provider: 'github',
-    owner: 'stablyai',
-    repo: devChannelRepo ?? 'orca',
-    // Keep main-repo releases draft until release-cut verifies all assets; early --publish always would expose missing Windows installers.
-    releaseType: devChannelRepo ? 'prerelease' : 'draft'
-  }
+  // No update feed. A github provider here would let electron-updater replace this fork with official Orca.
+  publish: null
 }
 
 // Stamp the effective channel version where node-mode CLI code can read it.

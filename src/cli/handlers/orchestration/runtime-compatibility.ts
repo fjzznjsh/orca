@@ -37,6 +37,7 @@ export async function flushOrchestrationStdout(): Promise<void> {
 export function isDevCliInvocation(): boolean {
   return (
     process.env.ORCA_DEV_CLI_INVOCATION === '1' ||
-    (process.env.ORCA_USER_DATA_PATH?.includes('orca-dev') ?? false)
+    process.env.ORCA_USER_DATA_PATH?.includes('orca-dev') === true ||
+    process.env.ORCA_USER_DATA_PATH?.includes('memorial-dev') === true
   )
 }
