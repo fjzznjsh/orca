@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/class-names'
 import { useTranslate } from '@/i18n/use-translate'
 import { deriveDashboardGroup } from '../../../shared/memorial/dashboard'
+import type { MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
 import type { Task } from '../../../shared/memorial/task'
 import { GROUP_ORDER, groupLabel } from './memorial-labels'
 import { MemorialTaskCard } from './MemorialTaskCard'
@@ -18,11 +19,14 @@ export type MemorialBoardActions = {
   onReveal: (taskId: string) => void
 }
 
+const NO_SIGNALS: MemorialTaskSignal[] = []
+
 type Props = {
   tasks: Task[]
   selectedTaskId: string | null
   actionsEnabled: boolean
   actions: MemorialBoardActions
+  signals?: MemorialTaskSignal[]
   compact?: boolean
 }
 
@@ -31,6 +35,7 @@ export function MemorialBoard({
   selectedTaskId,
   actionsEnabled,
   actions,
+  signals = NO_SIGNALS,
   compact = false
 }: Props): React.JSX.Element {
   const t = useTranslate()
@@ -39,9 +44,12 @@ export function MemorialBoard({
     items: tasks.filter((task) => deriveDashboardGroup(task) === group)
   })).filter((entry) => entry.items.length > 0)
   const selected = tasks.find((task) => task.id === selectedTaskId) ?? null
+  const signalFor = (taskId: string): MemorialTaskSignal | undefined =>
+    signals.find((signal) => signal.taskId === taskId)
   const detail = selected ? (
     <MemorialTaskDetail
       task={selected}
+      signal={signalFor(selected.id)}
       actionsEnabled={actionsEnabled}
       onReply={(text) => actions.onReply(selected.id, text)}
       onCancel={() => actions.onCancel(selected.id)}
@@ -135,9 +143,7 @@ export function MemorialBoard({
                     <h2 className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
                       {groupLabel(group, t)}
                     </h2>
-                    <Badge variant="outline" className="text-3xs">
-                      {items.length}
-                    </Badge>
+                    <Badge variant="outline">{items.length}</Badge>
                   </div>
                   <div className={cn('grid gap-2', compact ? 'grid-cols-1' : '2xl:grid-cols-2')}>
                     {items.map((task) => (
@@ -145,6 +151,7 @@ export function MemorialBoard({
                         key={task.id}
                         task={task}
                         selected={task.id === selectedTaskId}
+                        stalled={signalFor(task.id)?.stalled === true}
                         onSelect={() => actions.onSelect(task.id)}
                       />
                     ))}

@@ -8,10 +8,16 @@ import { attentionLabel, executionLabel, taskTypeLabel } from './memorial-labels
 type Props = {
   task: Task
   selected: boolean
+  stalled?: boolean
   onSelect: () => void
 }
 
-export function MemorialTaskCard({ task, selected, onSelect }: Props): React.JSX.Element {
+export function MemorialTaskCard({
+  task,
+  selected,
+  stalled = false,
+  onSelect
+}: Props): React.JSX.Element {
   const t = useTranslate()
   const interrupted = task.runOutcome === 'interrupted' && !task.cancelRequested
   return (
@@ -28,22 +34,14 @@ export function MemorialTaskCard({ task, selected, onSelect }: Props): React.JSX
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
           {task.title}
         </span>
-        <Badge variant="outline" className="text-3xs">
-          {taskTypeLabel(task.type, t)}
-        </Badge>
+        <Badge variant="outline">{taskTypeLabel(task.type, t)}</Badge>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        <Badge variant="secondary" className="text-3xs">
-          {executionLabel(task.executionStatus, t)}
-        </Badge>
+        <Badge variant="secondary">{executionLabel(task.executionStatus, t)}</Badge>
         {task.attentionStatus !== 'none' ? (
-          <Badge variant="outline" className="text-3xs">
-            {attentionLabel(task.attentionStatus, t)}
-          </Badge>
+          <Badge variant="outline">{attentionLabel(task.attentionStatus, t)}</Badge>
         ) : null}
-        <Badge variant="outline" className="text-3xs">
-          {task.attentionLevel}
-        </Badge>
+        <Badge variant="outline">{task.attentionLevel}</Badge>
       </div>
       {interrupted ? (
         <p className="mt-2 line-clamp-2 text-2xs text-muted-foreground">
@@ -54,6 +52,12 @@ export function MemorialTaskCard({ task, selected, onSelect }: Props): React.JSX
         <p className="mt-2 flex items-center gap-1 text-2xs text-muted-foreground">
           <AlertTriangle className="size-3" />
           {t('memorial.card.denied', '本轮有被拒命令')}
+        </p>
+      ) : null}
+      {stalled ? (
+        <p className="mt-2 flex items-center gap-1 text-2xs text-muted-foreground">
+          <AlertTriangle className="size-3" />
+          {t('memorial.card.stalled', '可能在等 Cursor 确认，请到终端处理')}
         </p>
       ) : null}
       {task.cancelRequested ? (

@@ -1,4 +1,5 @@
 import { defineFixture } from '../component-fixtures/component-fixture'
+import type { MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
 import type { Task } from '../../../shared/memorial/task'
 import { MemorialBoard } from './MemorialBoard'
 
@@ -77,47 +78,29 @@ const tasks: Task[] = [
   })
 ]
 
+const signals: MemorialTaskSignal[] = tasks.map((task) => {
+  const ready =
+    task.executionStatus === 'completed' ||
+    task.executionStatus === 'waiting' ||
+    task.executionStatus === 'cancelled'
+  return {
+    taskId: task.id,
+    canReply: ready,
+    stalled: false,
+    gate: ready ? 'ready' : 'running',
+    replyState: 'none'
+  }
+})
+
+const stalledSignals: MemorialTaskSignal[] = signals.map((signal) =>
+  signal.taskId === '重构终端状态行'
+    ? { ...signal, canReply: false, stalled: true, gate: 'stalled' }
+    : signal
+)
+
 const noop = (): void => undefined
 
-export const board = defineFixture({
-  width: 1180,
-  render: () => (
-    <MemorialBoard
-      tasks={tasks}
-      selectedTaskId="补齐登录态过期处理"
-      actionsEnabled
-      actions={{
-        onCreate: noop,
-        onRefresh: noop,
-        onSelect: noop,
-        onReply: noop,
-        onCancel: noop,
-        onReveal: noop
-      }}
-    />
-  )
-})
-
-export const empty = defineFixture({
-  width: 900,
-  render: () => (
-    <MemorialBoard
-      tasks={[]}
-      selectedTaskId={null}
-      actionsEnabled
-      actions={{
-        onCreate: noop,
-        onRefresh: noop,
-        onSelect: noop,
-        onReply: noop,
-        onCancel: noop,
-        onReveal: noop
-      }}
-    />
-  )
-})
-
-const panelActions = {
+const actions = {
   onCreate: noop,
   onRefresh: noop,
   onSelect: noop,
@@ -126,15 +109,34 @@ const panelActions = {
   onReveal: noop
 }
 
+export const board = defineFixture({
+  width: 1180,
+  render: () => (
+    <MemorialBoard
+      tasks={tasks}
+      signals={signals}
+      selectedTaskId="补齐登录态过期处理"
+      actionsEnabled
+      actions={actions}
+    />
+  )
+})
+
+export const empty = defineFixture({
+  width: 900,
+  render: () => <MemorialBoard tasks={[]} selectedTaskId={null} actionsEnabled actions={actions} />
+})
+
 export const panel = defineFixture({
   width: 320,
   render: () => (
     <MemorialBoard
       tasks={tasks}
+      signals={stalledSignals}
       selectedTaskId={null}
       actionsEnabled
       compact
-      actions={panelActions}
+      actions={actions}
     />
   )
 })
@@ -144,10 +146,25 @@ export const panelDetail = defineFixture({
   render: () => (
     <MemorialBoard
       tasks={tasks}
+      signals={signals}
       selectedTaskId="补齐登录态过期处理"
       actionsEnabled
       compact
-      actions={panelActions}
+      actions={actions}
+    />
+  )
+})
+
+export const panelStalled = defineFixture({
+  width: 320,
+  render: () => (
+    <MemorialBoard
+      tasks={tasks}
+      signals={stalledSignals}
+      selectedTaskId="重构终端状态行"
+      actionsEnabled
+      compact
+      actions={actions}
     />
   )
 })

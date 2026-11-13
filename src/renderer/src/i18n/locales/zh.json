@@ -23457,13 +23457,14 @@
       "submit": "创建并启动"
     },
     "notice": {
-      "notWired": "这个功能正在接入，当前版本先用来看界面。"
+      "failed": "操作失败"
     },
     "card": {
       "interrupted": "用户中断了这一轮",
       "denied": "本轮有被拒命令",
       "cancelRequested": "已记下取消意图，等待中断事件",
-      "updated": "更新于"
+      "updated": "更新于",
+      "stalled": "可能在等 Cursor 确认，请到终端处理"
     },
     "detail": {
       "eyebrow": "奏章详情",
@@ -23478,7 +23479,9 @@
       "send": "发送批复",
       "reveal": "定位到终端",
       "cancel": "取消任务",
-      "truncated": "命令输出与助手回复在展示前已截断到 4000 字符"
+      "truncated": "命令输出与助手回复在展示前已截断到 4000 字符",
+      "stalled": "可能在等 Cursor 确认",
+      "stalledHint": "命令放行后迟迟没有后续事件，请到终端里处理。"
     },
     "execution": {
       "queued": "待启动",
@@ -23514,6 +23517,19 @@
       "archived": "已归档"
     },
     "tab": "奏章台",
-    "back": "返回总览"
+    "back": "返回总览",
+    "needRepo": "请先在左侧打开一个项目，再创建奏章。",
+    "gate": {
+      "ready": "Agent 已停下，可以批复",
+      "unbound": "还没有绑定终端",
+      "stalled": "可能在等 Cursor 确认，请到终端处理",
+      "reply_pending": "上一句批复还在等确认",
+      "running": "Agent 正在执行，停下后才能批复"
+    },
+    "replyState": {
+      "sent": "已写入，等待确认",
+      "confirmed": "已送达",
+      "unconfirmed": "送达未确认"
+    }
   }
 }

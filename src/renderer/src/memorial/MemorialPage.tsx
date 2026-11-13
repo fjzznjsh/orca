@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useAppStore } from '@/store/index'
 import { useTranslate } from '@/i18n/use-translate'
+import type { MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
 import type { Task } from '../../../shared/memorial/task'
 import { MemorialBoard, type MemorialBoardActions } from './MemorialBoard'
-import { MemorialCreateTaskDialog } from './MemorialCreateTaskDialog'
+import { MemorialCreateTaskDialog, type MemorialCreateTaskDraft } from './MemorialCreateTaskDialog'
+
+function describeError(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback
+}
 
 export default function MemorialPage({
   compact = false
@@ -11,15 +17,25 @@ export default function MemorialPage({
 }): React.JSX.Element {
   const t = useTranslate()
   const [tasks, setTasks] = useState<Task[]>([])
+  const [signals, setSignals] = useState<MemorialTaskSignal[]>([])
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
+  const repoId = useAppStore((s) =>
+    s.activeWorktreeId ? (s.getKnownWorktreeById(s.activeWorktreeId)?.repoId ?? null) : null
+  )
+
   const refresh = useCallback((): void => {
-    void window.api.memorial
-      .listTasks()
-      .then(setTasks)
-      .catch(() => setTasks([]))
+    void Promise.all([window.api.memorial.listTasks(), window.api.memorial.listTaskSignals()])
+      .then(([nextTasks, nextSignals]) => {
+        setTasks(nextTasks)
+        setSignals(nextSignals)
+      })
+      .catch(() => {
+        setTasks([])
+        setSignals([])
+      })
   }, [])
 
   useEffect(() => {
@@ -28,8 +44,25 @@ export default function MemorialPage({
 
   useEffect(() => window.api.memorial.onTaskUpdated(refresh), [refresh])
 
-  const pendingNotice = (): void => {
-    setNotice(t('memorial.notice.notWired', '这个功能正在接入，当前版本先用来看界面。'))
+  const fail = (error: unknown): void => {
+    setNotice(describeError(error, t('memorial.notice.failed', '操作失败')))
+  }
+
+  const run = (work: Promise<unknown>): void => {
+    void work
+      .then(() => {
+        setNotice(null)
+        refresh()
+      })
+      .catch(fail)
+  }
+
+  const submitCreate = (draft: MemorialCreateTaskDraft): void => {
+    if (!repoId) {
+      setNotice(t('memorial.needRepo', '请先在左侧打开一个项目，再创建奏章。'))
+      return
+    }
+    run(window.api.memorial.createTask({ ...draft, repoId }))
   }
 
   const actions: MemorialBoardActions = {
@@ -39,9 +72,9 @@ export default function MemorialPage({
       refresh()
     },
     onSelect: setSelectedTaskId,
-    onReply: pendingNotice,
-    onCancel: pendingNotice,
-    onReveal: pendingNotice
+    onReply: (taskId, text) => run(window.api.memorial.replyTask(taskId, text)),
+    onCancel: (taskId) => run(window.api.memorial.cancelTask(taskId)),
+    onReveal: (taskId) => run(window.api.memorial.revealTask(taskId))
   }
 
   return (
@@ -54,8 +87,9 @@ export default function MemorialPage({
       <div className="min-h-0 flex-1">
         <MemorialBoard
           tasks={tasks}
+          signals={signals}
           selectedTaskId={selectedTaskId}
-          actionsEnabled={false}
+          actionsEnabled
           actions={actions}
           compact={compact}
         />
@@ -63,7 +97,7 @@ export default function MemorialPage({
       <MemorialCreateTaskDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
-        onSubmit={pendingNotice}
+        onSubmit={submitCreate}
       />
     </div>
   )

@@ -139,7 +139,7 @@ export function MemorialCreateTaskDialog({
               id="memorial-goal"
               value={goal}
               onChange={(event) => setGoal(event.target.value)}
-              className="min-h-16 resize-none text-xs"
+              className="min-h-16 resize-none"
               placeholder={t('memorial.create.goalPlaceholder', '这轮要达成什么')}
             />
           </div>
@@ -149,7 +149,7 @@ export function MemorialCreateTaskDialog({
               id="memorial-constraints"
               value={constraints}
               onChange={(event) => setConstraints(event.target.value)}
-              className="min-h-16 resize-none text-xs"
+              className="min-h-16 resize-none"
               placeholder={t('memorial.create.constraintsPlaceholder', '不要改动哪些东西')}
             />
           </div>
@@ -161,7 +161,7 @@ export function MemorialCreateTaskDialog({
               id="memorial-acceptance"
               value={acceptance}
               onChange={(event) => setAcceptance(event.target.value)}
-              className="min-h-16 resize-none text-xs"
+              className="min-h-16 resize-none"
               placeholder={t('memorial.create.acceptancePlaceholder', '怎样算做完')}
             />
           </div>
