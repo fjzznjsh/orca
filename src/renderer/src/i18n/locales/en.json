@@ -24813,5 +24813,91 @@
       "dismiss": "Dismiss",
       "cancelDownload": "Cancel download"
     }
+  },
+  "memorial": {
+    "nav": "奏章台",
+    "title": "奏章台",
+    "subtitle": "一个窗口里看完所有 Agent 的进展",
+    "refresh": "刷新",
+    "new": "新建奏章",
+    "empty": {
+      "title": "还没有奏章",
+      "body": "创建一条后，这里会按待御批、完成待验和推进中分组显示。"
+    },
+    "create": {
+      "title": "新建奏章",
+      "description": "标题、目标、约束与验收条件会组成 Agent 的首条提示词。",
+      "name": "标题",
+      "namePlaceholder": "例如：修复登录态过期",
+      "type": "类型",
+      "typePlaceholder": "选择类型",
+      "level": "关注度",
+      "levelPlaceholder": "选择关注度",
+      "goal": "目标",
+      "goalPlaceholder": "这轮要达成什么",
+      "constraints": "约束",
+      "constraintsPlaceholder": "不要改动哪些东西",
+      "acceptance": "验收条件",
+      "acceptancePlaceholder": "怎样算做完",
+      "dismiss": "取消",
+      "submit": "创建并启动"
+    },
+    "notice": {
+      "notWired": "这个功能正在接入，当前版本先用来看界面。"
+    },
+    "card": {
+      "interrupted": "用户中断了这一轮",
+      "denied": "本轮有被拒命令",
+      "cancelRequested": "已记下取消意图，等待中断事件",
+      "updated": "更新于"
+    },
+    "detail": {
+      "eyebrow": "奏章详情",
+      "recovery": "需要你处理",
+      "worktree": "工作区",
+      "pane": "窗格",
+      "unbound": "未绑定",
+      "review": "预审",
+      "reply": "批复",
+      "replyPlaceholder": "写下要发给 Agent 的批复",
+      "replyHint": "回执只证明写进终端，是否送达由下一轮事件确认",
+      "send": "发送批复",
+      "reveal": "定位到终端",
+      "cancel": "取消任务",
+      "truncated": "命令输出与助手回复在展示前已截断到 4000 字符"
+    },
+    "execution": {
+      "queued": "待启动",
+      "running": "推进中",
+      "waiting": "等待中",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消"
+    },
+    "attention": {
+      "none": "无需处理",
+      "decision": "待裁决",
+      "review": "完成待验",
+      "git": "待交付确认",
+      "recovery": "需恢复"
+    },
+    "type": {
+      "feature": "功能",
+      "bugfix": "修复",
+      "research": "调研",
+      "refactor": "重构",
+      "other": "其他"
+    },
+    "group": {
+      "imperialReview": "待御批",
+      "completedReview": "完成待验",
+      "inProgress": "推进中",
+      "blocked": "受阻",
+      "shelved": "搁置",
+      "reviewed": "已阅",
+      "settled": "已结",
+      "cancelled": "已取消",
+      "archived": "已归档"
+    }
   }
 }
