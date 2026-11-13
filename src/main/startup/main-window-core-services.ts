@@ -131,7 +131,7 @@ export function attachMainWindowCoreServices(
         }
       : undefined
   )
-  registerMemorialHandlers()
+  registerMemorialHandlers(runtime)
   automations.start()
   attachMainWindowServices(
     window,

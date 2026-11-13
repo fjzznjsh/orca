@@ -1,9 +1,13 @@
 import type { Task } from '../../shared/memorial/task'
 import type { PersistedTaskEvent } from '../../shared/memorial/ports'
-import type { MemorialCreateTaskRequest } from '../../shared/memorial/ipc-contract'
+import type {
+  MemorialCreateTaskRequest,
+  MemorialTaskSignal
+} from '../../shared/memorial/ipc-contract'
 
 export type MemorialApi = {
   listTasks: () => Promise<Task[]>
+  listTaskSignals: () => Promise<MemorialTaskSignal[]>
   getTask: (taskId: string) => Promise<Task | null>
   listTaskEvents: (taskId: string, afterSequence?: number) => Promise<PersistedTaskEvent[]>
   createTask: (request: MemorialCreateTaskRequest) => Promise<Task>

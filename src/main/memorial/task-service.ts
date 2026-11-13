@@ -97,6 +97,11 @@ export class TaskApplicationService {
     ingestHookEvent(this.store, event)
   }
 
+  /** Reply flow owns its own events; hooks must not invent them. */
+  recordTaskEvent(taskId: string, event: TaskEvent): Task {
+    return this.apply(taskId, event)
+  }
+
   /** Records a cancel intent. The task stays put until an interrupt hook arrives. */
   noteCancelIntent(taskId: string): Task {
     const stored = this.must(taskId)

@@ -34,7 +34,20 @@ let phase: KernelPhase = 'idle'
 let userDataPath: string | null = null
 let database: KernelDatabase | null = null
 let taskService: TaskApplicationService | null = null
+let hookObserver: ((event: MemorialHookEvent) => void) | null = null
+let kernelStopHook: (() => void) | null = null
 let opener: (directory: string) => Promise<KernelDatabase> = openTaskKernelDatabase
+
+/** Main-process observers run after a hook commits; the kernel stays free of Electron imports. */
+export function setMemorialHookObserver(observer: (event: MemorialHookEvent) => void): void {
+  hookObserver = observer
+}
+
+/** Lets the Electron-side assembly clear its own timers without importing it here. */
+export function setMemorialKernelStopHook(hook: (() => void) | null): void {
+  kernelStopHook = hook
+}
+
 let stopBudgetMs = DEFAULT_STOP_BUDGET_MS
 let retryDelayMs = DEFAULT_OPEN_RETRY_MS
 let initialRetryMs = DEFAULT_OPEN_RETRY_MS
@@ -197,6 +210,12 @@ async function pump(): Promise<void> {
       active.ingestHookEvent(event)
     } catch (error) {
       console.error('[memorial] dropped hook event', event.kind, event.paneKey, error)
+      continue
+    }
+    try {
+      hookObserver?.(event)
+    } catch (error) {
+      console.error('[memorial] hook observer failed', event.kind, error)
     }
   }
 }
@@ -240,11 +259,13 @@ export function startMemorialKernel(options: MemorialKernelOptions): void {
 export function resetMemorialKernelForTests(): void {
   clearRetryTimer()
   clearPruneTimer()
+  kernelStopHook?.()
   queue.length = 0
   database = null
   taskService = null
   userDataPath = null
   stopDeadline = null
+  hookObserver = null
   phase = 'idle'
 }
 
@@ -256,6 +277,11 @@ export function memorialKernelPhaseForTests(): KernelPhase {
 export async function stopMemorialKernel(): Promise<void> {
   clearRetryTimer()
   clearPruneTimer()
+  try {
+    kernelStopHook?.()
+  } catch (error) {
+    console.error('[memorial] kernel stop hook failed', error)
+  }
   if (phase === 'idle' || phase === 'stopped') {
     queue.length = 0
     return

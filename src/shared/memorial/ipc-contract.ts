@@ -4,6 +4,7 @@ export const MEMORIAL_IPC_CHANNELS = {
   listTasks: 'memorial:listTasks',
   getTask: 'memorial:getTask',
   listTaskEvents: 'memorial:listTaskEvents',
+  listTaskSignals: 'memorial:listTaskSignals',
   createTask: 'memorial:createTask',
   replyTask: 'memorial:replyTask',
   cancelTask: 'memorial:cancelTask',
@@ -24,7 +25,7 @@ export const MemorialCreateTaskRequest = z
     title: z.string().min(1).max(200),
     type: z.enum(MEMORIAL_TASK_TYPES),
     attentionLevel: z.enum(MEMORIAL_ATTENTION_LEVELS),
-    workspaceId: z.string().min(1),
+    repoId: z.string().min(1),
     goal: z.string().max(4000),
     constraints: z.string().max(4000),
     acceptance: z.string().max(4000)
@@ -50,3 +51,21 @@ export const MemorialListTaskEventsRequest = z
   })
   .strict()
 export type MemorialListTaskEventsRequest = z.infer<typeof MemorialListTaskEventsRequest>
+
+export const MEMORIAL_REPLY_GATES = [
+  'ready',
+  'unbound',
+  'running',
+  'stalled',
+  'reply_pending'
+] as const
+export type MemorialReplyGate = (typeof MEMORIAL_REPLY_GATES)[number]
+
+/** Derived, never persisted: the kernel only advances task state from hook events. */
+export type MemorialTaskSignal = {
+  taskId: string
+  canReply: boolean
+  stalled: boolean
+  gate: MemorialReplyGate
+  replyState: 'none' | 'sent' | 'confirmed' | 'unconfirmed'
+}

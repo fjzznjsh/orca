@@ -1,6 +1,9 @@
 import { ipcRenderer } from 'electron'
 import { MEMORIAL_IPC_CHANNELS } from '../../shared/memorial/ipc-contract'
-import type { MemorialCreateTaskRequest } from '../../shared/memorial/ipc-contract'
+import type {
+  MemorialCreateTaskRequest,
+  MemorialTaskSignal
+} from '../../shared/memorial/ipc-contract'
 import type { Task } from '../../shared/memorial/task'
 import type { PersistedTaskEvent } from '../../shared/memorial/ports'
 import type { PreloadApi } from '../api-types'
@@ -10,6 +13,8 @@ const invoke = <T>(channel: string, value?: unknown): Promise<T> =>
 
 export const memorialApi = {
   listTasks: (): Promise<Task[]> => invoke(MEMORIAL_IPC_CHANNELS.listTasks),
+  listTaskSignals: (): Promise<MemorialTaskSignal[]> =>
+    invoke(MEMORIAL_IPC_CHANNELS.listTaskSignals),
   getTask: (taskId: string): Promise<Task | null> =>
     invoke(MEMORIAL_IPC_CHANNELS.getTask, { taskId }),
   listTaskEvents: (taskId: string, afterSequence?: number): Promise<PersistedTaskEvent[]> =>
