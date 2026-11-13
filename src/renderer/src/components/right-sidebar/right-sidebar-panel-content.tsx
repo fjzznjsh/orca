@@ -15,6 +15,7 @@ const FolderWorkspacePrChecksPanel = lazy(
   () => import('./hosted-review/folder-checks/FolderWorkspacePrChecksPanel')
 )
 const PluginPanel = lazy(() => import('./plugin-panels/PluginPanel'))
+const MemorialPage = lazy(() => import('../../memorial/MemorialPage'))
 
 type RightSidebarPanelContentProps = {
   effectiveTab: ActiveRightSidebarTab
@@ -64,6 +65,7 @@ export function RightSidebarPanelContent({
           />
         )}
         {/* Remount on plugin changes so an old iframe cannot post through the next plugin's rebound bridge. */}
+        {effectiveTab === 'memorial' && <MemorialPage compact />}
         {isPluginPanelTabKey(effectiveTab) && (
           <PluginPanel key={effectiveTab} tabKey={effectiveTab} />
         )}

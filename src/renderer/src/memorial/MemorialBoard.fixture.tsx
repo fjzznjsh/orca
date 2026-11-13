@@ -116,3 +116,38 @@ export const empty = defineFixture({
     />
   )
 })
+
+const panelActions = {
+  onCreate: noop,
+  onRefresh: noop,
+  onSelect: noop,
+  onReply: noop,
+  onCancel: noop,
+  onReveal: noop
+}
+
+export const panel = defineFixture({
+  width: 320,
+  render: () => (
+    <MemorialBoard
+      tasks={tasks}
+      selectedTaskId={null}
+      actionsEnabled
+      compact
+      actions={panelActions}
+    />
+  )
+})
+
+export const panelDetail = defineFixture({
+  width: 320,
+  render: () => (
+    <MemorialBoard
+      tasks={tasks}
+      selectedTaskId="补齐登录态过期处理"
+      actionsEnabled
+      compact
+      actions={panelActions}
+    />
+  )
+})

@@ -25,6 +25,7 @@ export type RightSidebarState = {
   setRightSidebarTab: (tab: ActiveRightSidebarTab) => void
   setRightSidebarExplorerView: (view: RightSidebarExplorerView) => void
   showRightSidebarFiles: () => void
+  showMemorialPanel: () => void
   showRightSidebarSearch: (payload?: {
     query?: string | null
     includePattern?: string | null
@@ -83,6 +84,12 @@ export function createRightSidebarState(set: EditorSet, _get: EditorGet): RightS
               }
             }
           : {})
+      })),
+    showMemorialPanel: () =>
+      set((s) => ({
+        rightSidebarOpen: true,
+        rightSidebarTab: 'memorial',
+        rightSidebarRouteRequestId: s.rightSidebarRouteRequestId + 1
       })),
     showRightSidebarSearch: (payload) =>
       set((s) => {

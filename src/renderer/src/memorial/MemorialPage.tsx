@@ -4,7 +4,11 @@ import type { Task } from '../../../shared/memorial/task'
 import { MemorialBoard, type MemorialBoardActions } from './MemorialBoard'
 import { MemorialCreateTaskDialog } from './MemorialCreateTaskDialog'
 
-export default function MemorialPage(): React.JSX.Element {
+export default function MemorialPage({
+  compact = false
+}: {
+  compact?: boolean
+}): React.JSX.Element {
   const t = useTranslate()
   const [tasks, setTasks] = useState<Task[]>([])
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
@@ -43,7 +47,7 @@ export default function MemorialPage(): React.JSX.Element {
   return (
     <div className="relative flex h-full min-h-0 flex-col">
       {notice ? (
-        <div className="border-b border-border bg-accent/40 px-6 py-2 text-2xs text-muted-foreground">
+        <div className="border-b border-border bg-accent/40 px-3 py-2 text-2xs text-muted-foreground">
           {notice}
         </div>
       ) : null}
@@ -53,6 +57,7 @@ export default function MemorialPage(): React.JSX.Element {
           selectedTaskId={selectedTaskId}
           actionsEnabled={false}
           actions={actions}
+          compact={compact}
         />
       </div>
       <MemorialCreateTaskDialog
