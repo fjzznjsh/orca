@@ -33,6 +33,7 @@ const queue: MemorialHookEvent[] = []
 let phase: KernelPhase = 'idle'
 let userDataPath: string | null = null
 let database: KernelDatabase | null = null
+let taskService: TaskApplicationService | null = null
 let opener: (directory: string) => Promise<KernelDatabase> = openTaskKernelDatabase
 let stopBudgetMs = DEFAULT_STOP_BUDGET_MS
 let retryDelayMs = DEFAULT_OPEN_RETRY_MS
@@ -55,6 +56,7 @@ async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase
   const db = await openMemorialDatabase(directory)
   const store = new MemorialStore(db)
   const service = new TaskApplicationService(store, systemClock)
+  taskService = service
   return {
     ingestHookEvent(event) {
       service.ingestHookEvent(event)
@@ -66,6 +68,11 @@ async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase
       db.close()
     }
   }
+}
+
+/** IPC handlers and hook ingestion must share one service, so state never forks. */
+export function getMemorialTaskService(): TaskApplicationService | null {
+  return taskService
 }
 
 function enqueueWork(work: () => Promise<void>): Promise<void> {
@@ -235,6 +242,7 @@ export function resetMemorialKernelForTests(): void {
   clearPruneTimer()
   queue.length = 0
   database = null
+  taskService = null
   userDataPath = null
   stopDeadline = null
   phase = 'idle'
@@ -261,6 +269,7 @@ export async function stopMemorialKernel(): Promise<void> {
   }
   database?.close()
   database = null
+  taskService = null
   stopDeadline = null
   userDataPath = null
   phase = 'stopped'

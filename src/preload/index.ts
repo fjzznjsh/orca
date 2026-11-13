@@ -47,6 +47,7 @@ import { preflightApi } from './api/preflight-bridge'
 import { notificationsApi } from './api/notifications-bridge'
 import { onboardingApi } from './api/onboarding-bridge'
 import { dashboardApi } from './api/dashboard-bridge'
+import { memorialApi } from './api/memorial-bridge'
 import { terminalPreviewApi } from './api/terminal-preview-bridge'
 import { macosTccPromptsApi } from './api/macos-tcc-prompts-bridge'
 import { developerPermissionsApi } from './api/developer-permissions-bridge'
@@ -154,6 +155,7 @@ const api = {
   onboarding: onboardingApi,
   dashboard: dashboardApi,
   terminalPreview: terminalPreviewApi,
+  memorial: memorialApi,
   macosTccPrompts: macosTccPromptsApi,
   developerPermissions: developerPermissionsApi,
   computerUsePermissions: computerUsePermissionsApi,
