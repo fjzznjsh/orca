@@ -50,7 +50,7 @@ function packet(overrides: Partial<QuestionPacket> = {}): QuestionPacket {
 
 async function harness(
   leader: LeaderPort = escalate,
-  options: { slowMs?: number; deliverSlowAnswer?: SlowDeliverer } = {}
+  options: { slowMs?: number; clock?: () => number; deliverSlowAnswer?: SlowDeliverer } = {}
 ): Promise<{
   service: DecisionService
   store: DecisionStore
@@ -222,8 +222,10 @@ describe('decision service', () => {
 
   it('keeps a hook fallback waiting through the slow limit until a person answers', async () => {
     const calls: string[] = []
+    let now = 0
     const { service } = await harness(escalate, {
       slowMs: 40,
+      clock: () => now,
       deliverSlowAnswer: async () => {
         calls.push('sent')
         return 'sent'
@@ -232,7 +234,8 @@ describe('decision service', () => {
     const waiting = service.submit(packet({ id: 'hook-wait', reversible: false }), 'fallback', {
       holdMs: null
     })
-    await new Promise((resolve) => setTimeout(resolve, 60))
+    await expect.poll(() => service.get('hook-wait')?.status).toBe('pending')
+    now = 60
     const answered = service.answerFromHuman(
       'hook-wait',
       [{ questionId: 'color', selected: ['red'] }],

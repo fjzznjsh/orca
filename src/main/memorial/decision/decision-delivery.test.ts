@@ -141,13 +141,10 @@ function hook(paneKey: string): MemorialHookEvent {
 }
 
 async function waitForService() {
-  const started = Date.now()
-  while (Date.now() - started < 5_000) {
-    const current = getMemorialTaskService()
-    if (current) {
-      return current
-    }
-    await new Promise((resolve) => setTimeout(resolve, 20))
+  await expect.poll(() => getMemorialTaskService()).toBeTruthy()
+  const current = getMemorialTaskService()
+  if (!current) {
+    throw new Error('任务内核没有打开')
   }
-  throw new Error('任务内核没有打开')
+  return current
 }
