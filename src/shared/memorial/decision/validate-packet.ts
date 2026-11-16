@@ -1,16 +1,28 @@
-import {
-  EVIDENCE_KINDS,
-  QUESTION_KINDS,
-  type DecisionInputResult,
-  type EvidenceItem,
-  type QuestionItem,
-  type QuestionOption,
-  type QuestionPacket,
-  type WorkerQuestionInput
+import type {
+  DecisionInputResult,
+  EvidenceItem,
+  QuestionItem,
+  QuestionOption,
+  QuestionPacket,
+  WorkerQuestionInput
 } from './packet'
 
 function fail(errors: string[]): DecisionInputResult<never> {
   return { ok: false, errors }
+}
+
+function isQuestionKind(value: unknown): value is QuestionItem['kind'] {
+  return value === 'single' || value === 'multi' || value === 'free'
+}
+
+function isEvidenceKind(value: unknown): value is EvidenceItem['kind'] {
+  return (
+    value === 'repo-rule' ||
+    value === 'code' ||
+    value === 'precedent' ||
+    value === 'requirement' ||
+    value === 'none'
+  )
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -51,7 +63,7 @@ function readQuestion(value: unknown, index: number, errors: string[]): Question
     return null
   }
   const kind = value.kind
-  if (typeof kind !== 'string' || !QUESTION_KINDS.includes(kind as QuestionItem['kind'])) {
+  if (!isQuestionKind(kind)) {
     errors.push(`questions[${index}].kind must be single, multi, or free`)
   }
   const options: QuestionOption[] = []
@@ -65,9 +77,7 @@ function readQuestion(value: unknown, index: number, errors: string[]): Question
       }
     })
   }
-  const questionKind = QUESTION_KINDS.includes(kind as QuestionItem['kind'])
-    ? (kind as QuestionItem['kind'])
-    : 'free'
+  const questionKind = isQuestionKind(kind) ? kind : 'free'
   if (questionKind !== 'free' && options.length === 0) {
     errors.push(`questions[${index}] needs at least one option`)
   }
@@ -90,11 +100,11 @@ function readEvidence(value: unknown, errors: string[]): EvidenceItem[] {
       return []
     }
     const kind = item.kind
-    if (typeof kind !== 'string' || !EVIDENCE_KINDS.includes(kind as EvidenceItem['kind'])) {
+    if (!isEvidenceKind(kind)) {
       errors.push(`evidence[${index}].kind is invalid`)
       return []
     }
-    return [{ kind: kind as EvidenceItem['kind'], ref: requiredString(item, 'ref', errors) }]
+    return [{ kind, ref: requiredString(item, 'ref', errors) }]
   })
 }
 

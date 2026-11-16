@@ -1,10 +1,7 @@
-import { execFile } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { promisify } from 'node:util'
+import { runProcess } from '@orca/process-host'
 import { agentHookServer } from '../../agent-hooks/server/agent-hook-server'
-
-const execFileAsync = promisify(execFile)
 
 export async function writeWorktreeLeaderMcp(
   worktreePath: string,
@@ -34,10 +31,15 @@ export async function writeWorktreeLeaderMcp(
 }
 
 async function excludeMcpConfig(worktreePath: string): Promise<void> {
-  const { stdout } = await execFileAsync('git', ['rev-parse', '--git-path', 'info/exclude'], {
+  const result = await runProcess({
+    program: 'git',
+    args: ['rev-parse', '--git-path', 'info/exclude'],
     cwd: worktreePath
   })
-  const excludePath = stdout.trim()
+  if (result.code !== 0) {
+    throw new Error('不能把队长 MCP 配置排除出 Git')
+  }
+  const excludePath = result.stdout.trim()
   const absolute = excludePath.startsWith('/') ? excludePath : join(worktreePath, excludePath)
   await mkdir(dirname(absolute), { recursive: true })
   let current = ''

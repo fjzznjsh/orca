@@ -1,10 +1,16 @@
-import type { LeaderDecision, LeaderPort } from '../../../shared/memorial/decision/leader-port'
-import { isLeaderEscalation } from '../../../shared/memorial/decision/leader-port'
-import type { Answer, QuestionPacket } from '../../../shared/memorial/decision/packet'
+import {
+  isLeaderEscalation,
+  type LeaderDecision,
+  type LeaderPort
+} from '../../../shared/memorial/decision/leader-port'
+import type {
+  Answer,
+  DecisionInputResult,
+  QuestionPacket
+} from '../../../shared/memorial/decision/packet'
 import { classify } from '../../../shared/memorial/decision/classify'
 import type { TaskEvent } from '../../../shared/memorial/task-events'
 import { parseHumanSelections } from '../../../shared/memorial/decision/validate-human'
-import type { DecisionInputResult } from '../../../shared/memorial/decision/packet'
 import { acceptRecommendation } from './accept-recommendation'
 import type { DecisionStore, StoredDecision } from './decision-store'
 import { DECISION_STOPPED_MESSAGE, FALLBACK_CAP_MESSAGE } from './decision-text'

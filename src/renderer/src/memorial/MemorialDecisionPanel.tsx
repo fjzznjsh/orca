@@ -145,34 +145,36 @@ export function MemorialDecisionPanel({
       ))}
       {automatic.length > 0 ? (
         <Collapsible>
-          <CollapsibleTrigger className="text-2xs text-muted-foreground">
+          <CollapsibleTrigger variant="row">
             {t('memorial.decision.automatic', 'Automatically decided')} {automatic.length}
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2 space-y-2">
-            {automatic.map((decision) => (
-              <div key={decision.id} className="rounded-md border border-border p-2">
-                <p className="text-2xs text-foreground">
-                  {decision.tier} ·{' '}
-                  {decision.questions.map((question) => question.text).join(' / ')}
-                </p>
-                <p className="mt-1 text-2xs text-muted-foreground">{decision.choice}</p>
-                <p className="mt-1 text-2xs text-muted-foreground">{decision.rationale}</p>
-                <p className="mt-1 text-3xs text-muted-foreground">
-                  {decision.resolvedAt ?? decision.createdAt}
-                </p>
-                <Button
-                  className="mt-2"
-                  size="sm"
-                  variant="outline"
-                  disabled={decision.overturned}
-                  onClick={() => onOverturn(decision.id)}
-                >
-                  {decision.overturned
-                    ? t('memorial.decision.overturned', 'Overturned')
-                    : t('memorial.decision.overturn', 'Overturn')}
-                </Button>
-              </div>
-            ))}
+          <CollapsibleContent>
+            <div className="mt-2 space-y-2">
+              {automatic.map((decision) => (
+                <div key={decision.id} className="rounded-md border border-border p-2">
+                  <p className="text-2xs text-foreground">
+                    {decision.tier} ·{' '}
+                    {decision.questions.map((question) => question.text).join(' / ')}
+                  </p>
+                  <p className="mt-1 text-2xs text-muted-foreground">{decision.choice}</p>
+                  <p className="mt-1 text-2xs text-muted-foreground">{decision.rationale}</p>
+                  <p className="mt-1 text-3xs text-muted-foreground">
+                    {decision.resolvedAt ?? decision.createdAt}
+                  </p>
+                  <Button
+                    className="mt-2"
+                    size="sm"
+                    variant="outline"
+                    disabled={decision.overturned}
+                    onClick={() => onOverturn(decision.id)}
+                  >
+                    {decision.overturned
+                      ? t('memorial.decision.overturned', 'Overturned')
+                      : t('memorial.decision.overturn', 'Overturn')}
+                  </Button>
+                </div>
+              ))}
+            </div>
           </CollapsibleContent>
         </Collapsible>
       ) : null}
