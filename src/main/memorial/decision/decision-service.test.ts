@@ -9,7 +9,8 @@ import { openMemorialDatabase } from '../db/open-database'
 import { acceptRecommendation } from './accept-recommendation'
 import { DecisionService } from './decision-service'
 import { DecisionStore } from './decision-store'
-import { DECISION_STOPPED_MESSAGE } from './decision-text'
+import { DECISION_STOPPED_MESSAGE, SLOW_C_MESSAGE } from './decision-text'
+import type { SlowDeliverer } from './decision-delivery'
 
 const directories: string[] = []
 
@@ -46,7 +47,10 @@ function packet(overrides: Partial<QuestionPacket> = {}): QuestionPacket {
   }
 }
 
-async function harness(leader: LeaderPort = escalate): Promise<{
+async function harness(
+  leader: LeaderPort = escalate,
+  options: { slowMs?: number; deliverSlowAnswer?: SlowDeliverer } = {}
+): Promise<{
   service: DecisionService
   store: DecisionStore
   events: TaskEvent[]
@@ -60,6 +64,7 @@ async function harness(leader: LeaderPort = escalate): Promise<{
     store,
     leader,
     now: () => '2026-11-16T00:00:00.000Z',
+    ...options,
     recordEvent: (_taskId, event) => {
       events.push(event)
     }
@@ -134,5 +139,80 @@ describe('decision service', () => {
     const message = service.recordFallbackCap('task-1', 'pane-1', 'gen-1')
     expect(message).toBe('本轮兜底已超过 5 次，请停下并汇报')
     expect(store.get('fallback-cap:task-1:gen-1')?.tier).toBe('C')
+  })
+
+  it('releases a C question onto the slow path instead of another poll', async () => {
+    const { service } = await harness(escalate, { slowMs: 40 })
+    const result = await service.submit(packet({ id: 'slow', userVisible: true }), 'ask', {
+      holdMs: 500
+    })
+    expect(result).toEqual({ status: 'deferred', decisionId: 'slow', message: SLOW_C_MESSAGE })
+    const again = await service.submit(packet({ id: 'slow', userVisible: true }), 'ask', {
+      holdMs: 500
+    })
+    expect(again).toEqual(result)
+  })
+
+  it('answers inside the limit on the same turn and does not send a new message', async () => {
+    const calls: string[] = []
+    const { service } = await harness(escalate, {
+      slowMs: 5_000,
+      deliverSlowAnswer: async (delivery) => {
+        calls.push(delivery.text)
+        return 'sent'
+      }
+    })
+    const waiting = service.submit(packet({ id: 'fast-c', userVisible: true }), 'ask', {
+      holdMs: null
+    })
+    const answered = service.answerFromHuman(
+      'fast-c',
+      [{ questionId: 'color', selected: ['blue'] }],
+      'Still this turn.'
+    )
+    expect(answered.ok).toBe(true)
+    await expect(waiting).resolves.toMatchObject({ status: 'answered', answer: { tier: 'C' } })
+    expect(calls).toEqual([])
+  })
+
+  it('delivers a late human answer once through the reply channel', async () => {
+    const calls: string[] = []
+    const { service } = await harness(escalate, {
+      slowMs: 30,
+      deliverSlowAnswer: async (delivery) => {
+        calls.push(delivery.text)
+        return 'sent'
+      }
+    })
+    await service.submit(packet({ id: 'late', reversible: false }), 'ask', { holdMs: 400 })
+    const answered = service.answerFromHuman(
+      'late',
+      [{ questionId: 'color', selected: ['red'] }],
+      'Send it next.'
+    )
+    expect(answered.ok).toBe(true)
+    const first = service.retrySlowDelivery('late')
+    const second = service.retrySlowDelivery('late')
+    expect(second).toBe(first)
+    await expect(first).resolves.toBe('sent')
+    expect(calls).toHaveLength(1)
+    expect(calls[0]).toContain('决定来自：C、human')
+    expect(calls[0]).toContain('Red')
+  })
+
+  it('keeps a closed-task delivery result without sending twice', async () => {
+    let calls = 0
+    const { service } = await harness(escalate, {
+      slowMs: 20,
+      deliverSlowAnswer: async () => {
+        calls += 1
+        return 'task_ended'
+      }
+    })
+    await service.submit(packet({ id: 'closed', userVisible: true }), 'ask', { holdMs: 300 })
+    service.answerFromHuman('closed', [{ questionId: 'color', selected: ['blue'] }], 'Too late.')
+    await expect(service.retrySlowDelivery('closed')).resolves.toBe('task_ended')
+    await expect(service.retrySlowDelivery('closed')).resolves.toBe('task_ended')
+    expect(calls).toBe(1)
   })
 })

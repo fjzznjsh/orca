@@ -7,7 +7,7 @@ import { getMemorialTaskService } from '../task-kernel'
 import { getDecisionService } from './decision-runtime'
 import { followupForStop } from './decision-fallback'
 import { DECISION_HOLD_MS, type SubmitResult } from './decision-service'
-import { DECISION_STOPPED_MESSAGE } from './decision-text'
+import { DECISION_STOPPED_MESSAGE, SLOW_C_MESSAGE } from './decision-text'
 
 const NOT_IN_TASK = '当前不在奏章台任务中'
 const ASK_TOOL = 'ask_leader'
@@ -18,7 +18,8 @@ const ASK_DESCRIPTION = [
   '可逆、非用户可见、且有依据的事自己决定，并把假设写进最终回复。',
   '不确定就填 reversible false 或 userVisible true。',
   '入参：id、questions（id、text、kind 为 single|multi|free、options）、workerRecommendation、evidence（kind 为 repo-rule|code|precedent|requirement|none、ref）、reversible、userVisible、impactIfWrong。',
-  '若返回以 pending 开头，调用 ask_leader_result 并传入 decisionId 继续等，不要另起问题。'
+  '若返回以 pending 开头，调用 ask_leader_result 并传入 decisionId 继续等，不要另起问题。',
+  '若返回要求先做不依赖此决定的工作，停止轮询，答案会作为下一条消息送达。'
 ].join('')
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -66,6 +67,9 @@ function renderResult(packet: QuestionPacket, result: SubmitResult): string {
     return renderAnswerForWorker(packet, result.answer)
   }
   if (result.status === 'aborted') {
+    return result.message
+  }
+  if (result.status === 'deferred') {
     return result.message
   }
   return `pending\ndecisionId: ${result.decisionId}\n请调用 ask_leader_result 继续等待。`
@@ -213,7 +217,7 @@ async function handleMcp(req: IncomingMessage, res: ServerResponse, body: unknow
           { name: ASK_TOOL, description: ASK_DESCRIPTION, inputSchema: { type: 'object' } },
           {
             name: RESULT_TOOL,
-            description: '继续等待 ask_leader 返回的 decisionId。仍未决定时再次返回 pending。',
+            description: `继续等待 ask_leader 返回的 decisionId。仍未决定时再次返回 pending。超过等待上限时返回：${SLOW_C_MESSAGE}`,
             inputSchema: {
               type: 'object',
               properties: { decisionId: { type: 'string' } },

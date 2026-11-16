@@ -78,6 +78,54 @@ export function noteMemorialHookArrival(event: MemorialHookEvent): void {
   recordReply(pending.taskId, { type: 'reply_confirmed', at: now() })
 }
 
+export type DrivingPromptResult = 'sent' | 'unbound' | 'rejected'
+
+type DrivingRuntime = Pick<
+  OrcaRuntimeService,
+  'getTerminalHandleForPaneKey' | 'getTerminalPromptRequestBinding' | 'sendTerminalAgentPrompt'
+>
+
+/** Same write and beforeSubmitPrompt confirmation as a human reply, without the reply gate. */
+export async function submitMemorialDrivingPrompt(
+  runtime: DrivingRuntime,
+  taskId: string,
+  paneKey: string,
+  text: string,
+  options: { requestId?: string } = {}
+): Promise<DrivingPromptResult> {
+  let bound: ReturnType<typeof bindPane>
+  try {
+    bound = bindPane(runtime, paneKey)
+  } catch (error) {
+    console.error('[memorial] reply pane binding failed', error)
+    return 'unbound'
+  }
+  if (!bound) {
+    return 'unbound'
+  }
+  let accepted = false
+  try {
+    const sent = await runtime.sendTerminalAgentPrompt(bound.handle, text, {
+      inputKind: 'driving',
+      expectedBinding: bound.binding,
+      onPermission: 'wait',
+      acceptQueued: true,
+      requestId: options.requestId ?? randomUUID(),
+      observationTimeoutMs: 0
+    })
+    accepted = sent.accepted
+  } catch (error) {
+    console.error('[memorial] reply write failed', error)
+  }
+  if (!accepted) {
+    recordReply(taskId, { type: 'reply_unconfirmed', at: now() })
+    return 'rejected'
+  }
+  recordReply(taskId, { type: 'reply_sent', at: now(), text: truncateReply(text) })
+  armConfirmTimer(taskId, paneKey)
+  return 'sent'
+}
+
 export async function replyToMemorialTask(
   runtime: OrcaRuntimeService,
   taskId: string,
@@ -103,34 +151,9 @@ export async function replyToMemorialTask(
   if (!paneKey) {
     return unconfirmed()
   }
-  let bound: ReturnType<typeof bindPane>
-  try {
-    bound = bindPane(runtime, paneKey)
-  } catch (error) {
-    console.error('[memorial] reply pane binding failed', error)
+  const sent = await submitMemorialDrivingPrompt(runtime, taskId, paneKey, text)
+  if (sent === 'unbound') {
     return unconfirmed()
   }
-  if (!bound) {
-    return unconfirmed()
-  }
-  let accepted = false
-  try {
-    const sent = await runtime.sendTerminalAgentPrompt(bound.handle, text, {
-      inputKind: 'driving',
-      expectedBinding: bound.binding,
-      onPermission: 'wait',
-      acceptQueued: true,
-      requestId: randomUUID(),
-      observationTimeoutMs: 0
-    })
-    accepted = sent.accepted
-  } catch (error) {
-    console.error('[memorial] reply write failed', error)
-  }
-  if (!accepted) {
-    return unconfirmed()
-  }
-  recordReply(taskId, { type: 'reply_sent', at: now(), text: truncateReply(text) })
-  armConfirmTimer(taskId, paneKey)
   return service.getTask(taskId) ?? task
 }

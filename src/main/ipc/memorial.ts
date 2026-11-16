@@ -34,8 +34,10 @@ import { TaskNotFoundError, type TaskApplicationService } from '../memorial/task
 import {
   abortMemorialDecisions,
   getDecisionService,
-  setDecisionChangeListener
+  setDecisionChangeListener,
+  setDecisionSlowDeliverer
 } from '../memorial/decision/decision-runtime'
+import { deliverSlowDecisionAnswer } from '../memorial/decision/decision-delivery'
 import { presentDecision } from '../memorial/decision/decision-present'
 import { broadcastMemorialTaskUpdated } from '../memorial/task-update-broadcast'
 
@@ -49,6 +51,13 @@ function requireService(): TaskApplicationService {
 
 export function registerMemorialHandlers(runtime: OrcaRuntimeService): void {
   setDecisionChangeListener(broadcastMemorialTaskUpdated)
+  setDecisionSlowDeliverer((delivery) =>
+    deliverSlowDecisionAnswer(
+      runtime,
+      delivery,
+      getMemorialTaskService()?.getTask(delivery.taskId) ?? null
+    )
+  )
   setMemorialStallListener(broadcastMemorialTaskUpdated)
   setMemorialKernelStopHook(() => {
     clearMemorialStallTimers()
