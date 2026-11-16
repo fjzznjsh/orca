@@ -24926,7 +24926,13 @@
       "automatic": "Automatically decided",
       "overturn": "Overturn",
       "overturned": "Overturned",
-      "pendingCount": "Waiting for a decision"
+      "pendingCount": "Waiting for a decision",
+      "decidedBy": {
+        "rule": "Rule",
+        "leader": "Leader",
+        "human": "Human",
+        "unknown": "Unknown"
+      }
     }
   }
 }

@@ -311,7 +311,7 @@ describe('decision service', () => {
     expect(again.status).toBe('answered')
     if (again.status === 'answered') {
       expect(again.answer.tier).toBe('B')
-      expect(again.answer.decidedBy).toBe('leader')
+      expect(again.answer.decidedBy).toBe('rule')
       expect(again.answer.ruleId).toBe('precedent:first-c')
     }
     const fresh = await service.submit(

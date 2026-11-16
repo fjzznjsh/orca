@@ -23540,7 +23540,13 @@
       "automatic": "已自动决定",
       "overturn": "推翻",
       "overturned": "已推翻",
-      "pendingCount": "有待答"
+      "pendingCount": "有待答",
+      "decidedBy": {
+        "rule": "规则",
+        "leader": "队长",
+        "human": "人工",
+        "unknown": "未知"
+      }
     }
   }
 }

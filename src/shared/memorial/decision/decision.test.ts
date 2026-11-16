@@ -66,6 +66,46 @@ describe('matchRuleLeader', () => {
     const decision = matchRuleLeader({ fingerprint: 'missing', rules: [], precedents: [] })
     expect(decision).toEqual({ escalate: true, reason: '没有命中规则或先例' })
   })
+
+  it('cites a policy rule as B decided by rule', () => {
+    const decision = matchRuleLeader({
+      fingerprint: 'same',
+      rules: [
+        {
+          id: 'color-blue',
+          fingerprint: 'same',
+          answers: [{ questionId: 'color', selected: ['blue'] }],
+          rationale: 'Policy says blue.'
+        }
+      ],
+      precedents: []
+    })
+    expect(decision).toMatchObject({
+      decidedBy: 'rule',
+      tier: 'B',
+      ruleId: 'color-blue'
+    })
+  })
+
+  it('cites a precedent as B decided by rule', () => {
+    const decision = matchRuleLeader({
+      fingerprint: 'same',
+      rules: [],
+      precedents: [
+        {
+          fingerprint: 'same',
+          sourceDecisionId: 'first-c',
+          answers: [{ questionId: 'color', selected: ['blue'] }],
+          rationale: 'Blue once.'
+        }
+      ]
+    })
+    expect(decision).toMatchObject({
+      decidedBy: 'rule',
+      tier: 'B',
+      ruleId: 'precedent:first-c'
+    })
+  })
 })
 
 describe('renderAnswerForWorker', () => {

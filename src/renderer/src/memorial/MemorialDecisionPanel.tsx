@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useTranslate } from '@/i18n/use-translate'
 import type { MemorialDecisionView } from '../../../shared/memorial/decision/decision-view'
-import type { AnswerItem } from '../../../shared/memorial/decision/packet'
+import type { AnswerItem, DecidedBy } from '../../../shared/memorial/decision/packet'
 
 type Selection = { selected: string[]; text: string }
 
@@ -18,6 +18,19 @@ type Props = {
 
 function emptySelection(): Selection {
   return { selected: [], text: '' }
+}
+
+function decidedByLabel(decidedBy: DecidedBy | null, t: ReturnType<typeof useTranslate>): string {
+  switch (decidedBy) {
+    case 'rule':
+      return t('memorial.decision.decidedBy.rule', 'Rule')
+    case 'leader':
+      return t('memorial.decision.decidedBy.leader', 'Leader')
+    case 'human':
+      return t('memorial.decision.decidedBy.human', 'Human')
+    case null:
+      return t('memorial.decision.decidedBy.unknown', 'Unknown')
+  }
 }
 
 export function MemorialDecisionPanel({
@@ -153,7 +166,7 @@ export function MemorialDecisionPanel({
               {automatic.map((decision) => (
                 <div key={decision.id} className="rounded-md border border-border p-2">
                   <p className="text-2xs text-foreground">
-                    {decision.tier} ·{' '}
+                    {decision.tier} · {decidedByLabel(decision.decidedBy, t)} ·{' '}
                     {decision.questions.map((question) => question.text).join(' / ')}
                   </p>
                   <p className="mt-1 text-2xs text-muted-foreground">{decision.choice}</p>

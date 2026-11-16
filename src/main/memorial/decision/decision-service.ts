@@ -253,7 +253,7 @@ export class DecisionService {
     if (!decision.ruleId || decision.rationale.trim() === '') {
       return null
     }
-    return { ...decision, tier: 'B', decidedBy: 'leader' }
+    return { ...decision, tier: 'B' }
   }
 
   private finishAnswered(

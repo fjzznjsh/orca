@@ -22,7 +22,7 @@ function citedAnswer(answers: AnswerItem[], rationale: string, ruleId: string): 
   return {
     answers,
     rationale,
-    decidedBy: 'leader',
+    decidedBy: 'rule',
     tier: 'B',
     ruleId
   }
