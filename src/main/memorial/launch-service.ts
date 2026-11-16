@@ -5,20 +5,31 @@ import { ALL_RPC_METHODS } from '../runtime/rpc/methods/rpc-method-registry'
 import type { OrcaRuntimeService } from '../runtime/orca-runtime'
 import type { MemorialCreateTaskRequest } from '../../shared/memorial/ipc-contract'
 import type { Task } from '../../shared/memorial/task'
+import { writeWorktreeLeaderMcp } from './decision/project-mcp'
 import { getMemorialTaskService } from './task-kernel'
 
-/** agentArgs replaces the default argv, so --yolo must stay alongside D-11's --force. */
-const CURSOR_AGENT_ARGS = '--yolo --force'
+/** agentArgs replaces the default argv, so --yolo stays with D-11's --force. MCP approval is a separate flag. */
+const CURSOR_AGENT_ARGS = '--yolo --force --approve-mcps'
 
 const WorktreeCreateResult = z.object({
-  worktree: z.object({ id: z.string().min(1) }),
-  startupTerminal: z
+  worktree: z
     .object({
-      handle: z.string().optional(),
-      paneKey: z.string().nullable().optional()
+      id: z.string().min(1),
+      path: z.string().min(1).optional(),
+      git: z
+        .object({ path: z.string().min(1) })
+        .partial()
+        .optional()
     })
-    .optional(),
-  agentTerminalHandle: z.string().optional()
+    .passthrough()
+})
+
+const AgentLaunchResult = z.object({
+  outcome: z.object({
+    kind: z.string(),
+    handle: z.string().optional(),
+    paneKey: z.string().optional()
+  })
 })
 
 function buildPrompt(request: MemorialCreateTaskRequest): string {
@@ -30,7 +41,11 @@ function buildPrompt(request: MemorialCreateTaskRequest): string {
   ].join('\n')
 }
 
-/** Starts the Agent first: hooks that beat bindTask go to pending_hook_events and are replayed. */
+function worktreePathOf(worktree: z.infer<typeof WorktreeCreateResult>['worktree']): string | null {
+  return worktree.path ?? worktree.git?.path ?? null
+}
+
+/** The MCP file has to exist before the Agent process starts, so creation and launch are separate. */
 export async function createMemorialTask(
   runtime: OrcaRuntimeService,
   request: MemorialCreateTaskRequest
@@ -40,9 +55,6 @@ export async function createMemorialTask(
     await rpc('worktree.create', {
       repo: `id:${request.repoId}`,
       name: `memorial-${randomUUID().slice(0, 8)}`,
-      startupAgent: 'cursor',
-      startupAgentArgs: CURSOR_AGENT_ARGS,
-      startupPrompt: buildPrompt(request),
       setupDecision: 'skip',
       activate: false
     })
@@ -51,10 +63,9 @@ export async function createMemorialTask(
   if (!service) {
     throw new Error('Memorial task kernel is not running')
   }
-  const handle = created.agentTerminalHandle ?? created.startupTerminal?.handle
-  const paneKey = created.startupTerminal?.paneKey
-  if (!handle || !paneKey) {
-    throw new Error('Agent started without a terminal binding')
+  const worktreePath = worktreePathOf(created.worktree)
+  if (!worktreePath) {
+    throw new Error('新建工作区没有路径，不能注册队长提问')
   }
   const task = service.createTask({
     title: request.title,
@@ -62,6 +73,27 @@ export async function createMemorialTask(
     attentionLevel: request.attentionLevel,
     workspaceId: created.worktree.id
   })
+  await writeWorktreeLeaderMcp(worktreePath, created.worktree.id)
+  const launched = AgentLaunchResult.parse(
+    await rpc('agent.launch', {
+      agent: 'cursor',
+      target: { kind: 'existing', worktree: `id:${created.worktree.id}` },
+      agentArgs: CURSOR_AGENT_ARGS,
+      prompt: { text: buildPrompt(request), delivery: 'submit' },
+      surface: 'terminal',
+      presentation: 'background'
+    })
+  )
+  const handle = launched.outcome.handle
+  const paneKey = launched.outcome.paneKey
+  if (launched.outcome.kind !== 'terminal' || !handle || !paneKey) {
+    service.recordTaskEvent(task.id, {
+      type: 'run.start_failed',
+      at: new Date().toISOString(),
+      message: 'Agent 启动后没有终端绑定'
+    })
+    throw new Error('Agent 启动后没有终端绑定')
+  }
   try {
     service.bindTask({
       taskId: task.id,
