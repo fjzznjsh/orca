@@ -52,8 +52,16 @@ export class DecisionLane {
       return Promise.resolve(this.markDeferred(id))
     }
     const limit = holdMs === undefined ? this.defaultHoldMs : holdMs
-    const waitMs = limit == null ? remaining : Math.min(limit, remaining)
-    const releasesWorker = limit == null || remaining <= limit
+    if (limit == null) {
+      return new Promise((resolve) => {
+        const finish = (result: SubmitResult): void => resolve(result)
+        const current = this.waiters.get(id) ?? []
+        current.push({ finish })
+        this.waiters.set(id, current)
+      })
+    }
+    const waitMs = Math.min(limit, remaining)
+    const releasesWorker = remaining <= limit
     return new Promise((resolve) => {
       let settled = false
       let timer: ReturnType<typeof setTimeout> | null = null

@@ -215,4 +215,27 @@ describe('decision service', () => {
     await expect(service.retrySlowDelivery('closed')).resolves.toBe('task_ended')
     expect(calls).toBe(1)
   })
+
+  it('keeps a hook fallback waiting through the slow limit until a person answers', async () => {
+    const calls: string[] = []
+    const { service } = await harness(escalate, {
+      slowMs: 40,
+      deliverSlowAnswer: async () => {
+        calls.push('sent')
+        return 'sent'
+      }
+    })
+    const waiting = service.submit(packet({ id: 'hook-wait', reversible: false }), 'fallback', {
+      holdMs: null
+    })
+    await new Promise((resolve) => setTimeout(resolve, 60))
+    const answered = service.answerFromHuman(
+      'hook-wait',
+      [{ questionId: 'color', selected: ['red'] }],
+      'Same hook.'
+    )
+    expect(answered.ok).toBe(true)
+    await expect(waiting).resolves.toMatchObject({ status: 'answered', answer: { tier: 'C' } })
+    expect(calls).toEqual([])
+  })
 })

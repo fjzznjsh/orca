@@ -75,6 +75,10 @@ export function readTaskEvent(payloadJson: string): TaskEvent {
       return { type: parsed.type, at, text: requiredString(parsed, 'text') }
     case 'session_lost':
       return { type: parsed.type, at, hint: requiredString(parsed, 'hint') }
+    case 'decision_requested':
+      return { type: 'decision_requested', at, decisionId: requiredString(parsed, 'decisionId') }
+    case 'decision_resolved':
+      return { type: 'decision_resolved', at, decisionId: requiredString(parsed, 'decisionId') }
     case 'task.observed':
       return {
         type: parsed.type,
