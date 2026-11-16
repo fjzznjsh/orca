@@ -1,4 +1,6 @@
 import type {
+  DecisionRequestedEvent,
+  DecisionResolvedEvent,
   GateRequestedEvent,
   GateResolvedEvent,
   ReplyConfirmedEvent,
@@ -26,6 +28,8 @@ export type HookDomainEvent =
   | ReplyConfirmedEvent
   | ReplyUnconfirmedEvent
   | SessionLostEvent
+  | DecisionRequestedEvent
+  | DecisionResolvedEvent
 
 export function isHookDomainEvent(event: TaskEvent): event is HookDomainEvent {
   switch (event.type) {
@@ -40,6 +44,8 @@ export function isHookDomainEvent(event: TaskEvent): event is HookDomainEvent {
     case 'reply_confirmed':
     case 'reply_unconfirmed':
     case 'session_lost':
+    case 'decision_requested':
+    case 'decision_resolved':
       return true
     case 'task.created':
     case 'task.started':
@@ -111,6 +117,11 @@ export function applyHookDomainEvent(next: Task, event: HookDomainEvent): Task {
       return { ...next, replyState: 'unconfirmed' }
     case 'session_lost':
       return { ...next, attentionStatus: 'recovery_required', recoveryHint: event.hint }
+    case 'decision_requested':
+      return { ...next, executionStatus: 'waiting', attentionStatus: 'decision_required' }
+    case 'decision_resolved':
+      // The next hook event moves execution. Answering must not pretend the run resumed.
+      return { ...next, attentionStatus: 'none' }
   }
 }
 

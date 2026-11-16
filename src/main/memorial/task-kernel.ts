@@ -4,6 +4,7 @@ import type { Clock } from '../../shared/memorial/ports'
 import { MemorialStore } from './db/memorial-store'
 import { MEMORIAL_DATABASE_FILE, openMemorialDatabase } from './db/open-database'
 import { TaskApplicationService } from './task-service'
+import type SyncDatabase from '../sqlite/sync-database'
 
 export const MEMORIAL_KERNEL_QUEUE_LIMIT = 5000
 const DROP_WARNING_INTERVAL_MS = 60_000
@@ -33,6 +34,7 @@ const queue: MemorialHookEvent[] = []
 let phase: KernelPhase = 'idle'
 let userDataPath: string | null = null
 let database: KernelDatabase | null = null
+let decisionDatabase: SyncDatabase | null = null
 let taskService: TaskApplicationService | null = null
 let hookObserver: ((event: MemorialHookEvent) => void) | null = null
 let kernelStopHook: (() => void) | null = null
@@ -67,6 +69,7 @@ function vitestSkipsKernel(): boolean {
 
 async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase> {
   const db = await openMemorialDatabase(directory)
+  decisionDatabase = db
   const store = new MemorialStore(db)
   const service = new TaskApplicationService(store, systemClock)
   taskService = service
@@ -78,6 +81,8 @@ async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase
       store.prunePending(now)
     },
     close() {
+      decisionDatabase = null
+      taskService = null
       db.close()
     }
   }
@@ -86,6 +91,14 @@ async function openTaskKernelDatabase(directory: string): Promise<KernelDatabase
 /** IPC handlers and hook ingestion must share one service, so state never forks. */
 export function getMemorialTaskService(): TaskApplicationService | null {
   return taskService
+}
+
+export function getMemorialDecisionDatabase(): SyncDatabase | null {
+  return decisionDatabase
+}
+
+export function getMemorialUserDataPath(): string | null {
+  return userDataPath
 }
 
 function enqueueWork(work: () => Promise<void>): Promise<void> {
@@ -262,6 +275,7 @@ export function resetMemorialKernelForTests(): void {
   kernelStopHook?.()
   queue.length = 0
   database = null
+  decisionDatabase = null
   taskService = null
   userDataPath = null
   stopDeadline = null

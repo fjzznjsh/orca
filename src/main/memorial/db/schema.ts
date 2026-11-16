@@ -56,6 +56,35 @@ export const HOOK_EVENTS_TABLE_SQL = `
 `
 
 /** Short-lived hooks for panes that are not bound to a task yet. No command output or reply text. */
+export const DECISIONS_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS decisions (
+    id TEXT PRIMARY KEY,
+    taskId TEXT NOT NULL,
+    paneKey TEXT NOT NULL,
+    channel TEXT NOT NULL,
+    generationId TEXT,
+    tier TEXT,
+    decidedBy TEXT,
+    status TEXT NOT NULL,
+    packetJson TEXT NOT NULL,
+    answerJson TEXT,
+    rationale TEXT,
+    evidenceJson TEXT,
+    overturned INTEGER NOT NULL DEFAULT 0,
+    createdAt TEXT NOT NULL,
+    resolvedAt TEXT
+  )
+`
+
+export const DECISION_PRECEDENTS_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS decision_precedents (
+    fingerprint TEXT PRIMARY KEY,
+    answerJson TEXT NOT NULL,
+    sourceDecisionId TEXT NOT NULL,
+    createdAt TEXT NOT NULL
+  )
+`
+
 export const PENDING_HOOK_EVENTS_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS pending_hook_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

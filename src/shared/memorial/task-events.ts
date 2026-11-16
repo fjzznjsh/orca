@@ -162,6 +162,18 @@ export type SessionLostEvent = {
   hint: string
 }
 
+export type DecisionRequestedEvent = {
+  type: 'decision_requested'
+  at: string
+  decisionId: string
+}
+
+export type DecisionResolvedEvent = {
+  type: 'decision_resolved'
+  at: string
+  decisionId: string
+}
+
 export type TaskEvent =
   | TaskCreatedEvent
   | TaskStartedEvent
@@ -190,3 +202,5 @@ export type TaskEvent =
   | ReplyConfirmedEvent
   | ReplyUnconfirmedEvent
   | SessionLostEvent
+  | DecisionRequestedEvent
+  | DecisionResolvedEvent

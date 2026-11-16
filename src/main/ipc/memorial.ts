@@ -29,6 +29,10 @@ import {
 } from '../memorial/stall-monitor'
 import { listMemorialTaskSignals } from '../memorial/task-signals'
 import { TaskNotFoundError, type TaskApplicationService } from '../memorial/task-service'
+import {
+  abortMemorialDecisions,
+  setDecisionChangeListener
+} from '../memorial/decision/decision-runtime'
 import { broadcastMemorialTaskUpdated } from '../memorial/task-update-broadcast'
 
 function requireService(): TaskApplicationService {
@@ -40,10 +44,12 @@ function requireService(): TaskApplicationService {
 }
 
 export function registerMemorialHandlers(runtime: OrcaRuntimeService): void {
+  setDecisionChangeListener(broadcastMemorialTaskUpdated)
   setMemorialStallListener(broadcastMemorialTaskUpdated)
   setMemorialKernelStopHook(() => {
     clearMemorialStallTimers()
     clearMemorialReplyTimers()
+    abortMemorialDecisions()
   })
   setMemorialHookObserver((event) => {
     noteMemorialHookEvent(event)

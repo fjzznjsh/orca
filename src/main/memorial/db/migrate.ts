@@ -1,6 +1,8 @@
 import type SyncDatabase from '../../sqlite/sync-database'
 import {
   BLOCK_INTERVALS_TABLE_SQL,
+  DECISION_PRECEDENTS_TABLE_SQL,
+  DECISIONS_TABLE_SQL,
   HOOK_EVENTS_TABLE_SQL,
   OPEN_BLOCK_INTERVALS_INDEX_SQL,
   PENDING_HOOK_EVENTS_TABLE_SQL,
@@ -36,6 +38,8 @@ export function migrateMemorialDatabase(db: SyncDatabase): void {
   db.exec(OPEN_BLOCK_INTERVALS_INDEX_SQL)
   db.exec(HOOK_EVENTS_TABLE_SQL)
   db.exec(PENDING_HOOK_EVENTS_TABLE_SQL)
+  db.exec(DECISIONS_TABLE_SQL)
+  db.exec(DECISION_PRECEDENTS_TABLE_SQL)
   if (schemaVersion(db) < MEMORIAL_SCHEMA_VERSION) {
     db.exec('DELETE FROM hook_events WHERE taskId IS NULL')
     db.exec(`PRAGMA user_version = ${MEMORIAL_SCHEMA_VERSION}`)
