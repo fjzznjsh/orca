@@ -4,7 +4,6 @@ import {
   endsWithQuestion,
   lastNonEmptyLine
 } from '../../../shared/memorial/decision/question-ending'
-import { renderAnswerForWorker } from '../../../shared/memorial/decision/render-answer'
 import type { Task } from '../../../shared/memorial/task'
 import { getMemorialTaskService } from '../task-kernel'
 import { getDecisionService } from './decision-runtime'
@@ -47,33 +46,35 @@ function fallbackPacket(
   }
 }
 
-export async function followupForStop(input: {
+/** Records a question-ending turn and sends the answer as the next message. The stop hook does not wait. */
+export async function noteQuestionEnding(input: {
   paneKey: string
   generationId: string
-}): Promise<string | null> {
+}): Promise<void> {
   const tasks = getMemorialTaskService()
   const task = tasks?.listTasks().find((item) => item.binding?.paneKey === input.paneKey)
   if (!task || !input.generationId) {
-    return null
+    return
   }
   const evidence = tasks?.listHookEvidence(task.id) ?? []
   if (sawAskLeader(evidence, input.generationId)) {
-    return null
+    return
   }
   const text = responseText(evidence, input.generationId)
   if (!endsWithQuestion(text)) {
-    return null
+    return
   }
   const service = getDecisionService()
   if (!service) {
-    return null
+    return
   }
   const prior = service
     .listByTask(task.id)
     .filter((row) => row.channel === 'fallback' && row.generationId === input.generationId)
   if (prior.length >= FALLBACK_LIMIT) {
-    const answer = service.recordFallbackCap(task.id, input.paneKey, input.generationId)
-    return answer
+    service.recordFallbackCap(task.id, input.paneKey, input.generationId)
+    await service.deliverResolved(`fallback-cap:${task.id}:${input.generationId}`)
+    return
   }
   const packet = fallbackPacket(
     task,
@@ -82,15 +83,12 @@ export async function followupForStop(input: {
     lastNonEmptyLine(text),
     prior.length + 1
   )
+  service.markForDelivery(packet.id)
   const result = await service.submit(packet, 'fallback', {
-    holdMs: null,
+    holdMs: 0,
     generationId: input.generationId
   })
   if (result.status === 'answered') {
-    return renderAnswerForWorker(packet, result.answer)
+    await service.deliverResolved(packet.id)
   }
-  if (result.status === 'aborted') {
-    return result.message
-  }
-  return null
 }

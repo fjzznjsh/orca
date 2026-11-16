@@ -35,12 +35,9 @@ try:
         },
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=840) as response:
-        parsed = json.loads(response.read().decode())
-    if isinstance(parsed, dict) and isinstance(parsed.get("followup_message"), str):
-        emit({"followup_message": parsed["followup_message"]})
-    else:
-        emit({})
+    with urllib.request.urlopen(request, timeout=5) as response:
+        response.read()
+    emit({})
 except Exception:
     emit({})
 `

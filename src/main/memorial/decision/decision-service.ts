@@ -109,10 +109,11 @@ export class DecisionService {
     this.options.store.answer(decisionId, answer, at)
     this.options.store.rememberPrecedent(stored.packet, answer, at)
     this.note(stored.taskId, { type: 'decision_resolved', at, decisionId })
-    const slow =
+    const deliver =
+      this.lane.wantsDelivery(decisionId) ||
       this.lane.isDeferred(decisionId) ||
       (!this.lane.hasWaiter(decisionId) && this.lane.remaining(stored) <= 0)
-    if (slow) {
+    if (deliver) {
       this.lane.markDeferred(decisionId)
       this.lane.wake(decisionId, { status: 'deferred', decisionId, message: SLOW_C_MESSAGE })
       void this.lane.deliverOnce(stored, answer, this.deliverer)
@@ -125,6 +126,18 @@ export class DecisionService {
 
   retrySlowDelivery(decisionId: string): Promise<SlowDeliveryOutcome | null> {
     return this.lane.retry(decisionId)
+  }
+
+  markForDelivery(decisionId: string): void {
+    this.lane.expectDelivery(decisionId)
+  }
+
+  async deliverResolved(decisionId: string): Promise<SlowDeliveryOutcome | null> {
+    const stored = this.options.store.get(decisionId)
+    if (!stored?.answer) {
+      return null
+    }
+    return this.lane.deliverOnce(stored, stored.answer, this.deliverer)
   }
 
   overturn(decisionId: string): boolean {
@@ -206,11 +219,12 @@ export class DecisionService {
         submitOptions.generationId
       )
     }
-    if (tier === 'B') {
-      const led = await this.askLeader(packet)
-      if (led) {
-        return this.finishAnswered(packet, channel, led, submitOptions.generationId)
-      }
+    const led = await this.askLeader(packet)
+    if (this.stopped) {
+      return { status: 'aborted', message: DECISION_STOPPED_MESSAGE }
+    }
+    if (led) {
+      return this.finishAnswered(packet, channel, led, submitOptions.generationId)
     }
     return this.enqueue(packet, channel, submitOptions)
   }

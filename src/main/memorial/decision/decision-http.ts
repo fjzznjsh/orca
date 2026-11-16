@@ -5,7 +5,7 @@ import { parseWorkerQuestion } from '../../../shared/memorial/decision/validate-
 import type { Task } from '../../../shared/memorial/task'
 import { getMemorialTaskService } from '../task-kernel'
 import { getDecisionService } from './decision-runtime'
-import { followupForStop } from './decision-fallback'
+import { noteQuestionEnding } from './decision-fallback'
 import { DECISION_HOLD_MS, type SubmitResult } from './decision-service'
 import { DECISION_STOPPED_MESSAGE, SLOW_C_MESSAGE } from './decision-text'
 
@@ -171,8 +171,8 @@ async function handleFallback(
         ? headerPane
         : ''
   const generationId = typeof record.generationId === 'string' ? record.generationId : ''
-  const message = await followupForStop({ paneKey, generationId })
-  writeJson(res, 200, message ? { followup_message: message } : {})
+  await noteQuestionEnding({ paneKey, generationId })
+  writeJson(res, 200, {})
 }
 
 function toolResult(

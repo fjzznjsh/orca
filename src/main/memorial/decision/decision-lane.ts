@@ -14,6 +14,7 @@ export class DecisionLane {
   private readonly waiters = new Map<string, Waiter[]>()
   private readonly openedAt = new Map<string, number>()
   private readonly deferred = new Set<string>()
+  private readonly deliveryExpected = new Set<string>()
   private readonly deliveries = new Map<string, Promise<SlowDeliveryOutcome>>()
 
   constructor(
@@ -21,6 +22,14 @@ export class DecisionLane {
     private readonly slowMs: number,
     private readonly defaultHoldMs: number
   ) {}
+
+  expectDelivery(id: string): void {
+    this.deliveryExpected.add(id)
+  }
+
+  wantsDelivery(id: string): boolean {
+    return this.deliveryExpected.has(id)
+  }
 
   open(id: string): void {
     this.openedAt.set(id, this.clock())
