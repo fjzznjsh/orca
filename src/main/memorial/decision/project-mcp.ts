@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { promisify } from 'node:util'
-import { agentHookServer } from '../agent-hooks/server/agent-hook-server'
+import { agentHookServer } from '../../agent-hooks/server/agent-hook-server'
 
 const execFileAsync = promisify(execFile)
 
