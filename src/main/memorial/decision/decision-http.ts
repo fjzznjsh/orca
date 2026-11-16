@@ -253,6 +253,21 @@ async function handleMcp(req: IncomingMessage, res: ServerResponse, body: unknow
   })
 }
 
+export async function handleMemorialDecisionOrStale(
+  req: IncomingMessage,
+  res: ServerResponse,
+  pathname: string,
+  body: unknown,
+  isCurrent: () => boolean
+): Promise<boolean> {
+  if (!isCurrent()) {
+    res.writeHead(204)
+    res.end()
+    return true
+  }
+  return maybeHandleMemorialDecision(req, res, pathname, body)
+}
+
 export async function maybeHandleMemorialDecision(
   req: IncomingMessage,
   res: ServerResponse,

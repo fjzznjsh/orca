@@ -19,7 +19,7 @@ import { clearAllListenerCaches } from '../../../shared/agent-hook-listener/list
 import { trackEmptyPaneKeyHook } from './server-transport-rules'
 import { AgentHookServerStatusHookLifecycle } from './server-status-hook-lifecycle'
 import { OPENCODE_STARTUP_PROMPT_CLAIM_PATH } from '../../../shared/agent-launch/startup/opencode-startup-prompt'
-import { maybeHandleMemorialDecision } from '../../memorial/decision/decision-http'
+import { handleMemorialDecisionOrStale } from '../../memorial/decision/decision-http'
 import { CLAUDE_AGENT_VIEW_PATH } from '../../../shared/claude-agent-view'
 import { respondAfterAgentToolPluginHooks } from '../tool-events/agent-tool-plugin-hooks'
 
@@ -83,12 +83,7 @@ export abstract class AgentHookServerLifecycle extends AgentHookServerStatusHook
       const pathname = new URL(req.url ?? '/', 'http://127.0.0.1').pathname
       try {
         const body = await readRequestBody(req)
-        if (!isCurrent()) {
-          res.writeHead(204)
-          res.end()
-          return
-        }
-        if (await maybeHandleMemorialDecision(req, res, pathname, body)) {
+        if (await handleMemorialDecisionOrStale(req, res, pathname, body, isCurrent)) {
           return
         }
         if (pathname === OPENCODE_STARTUP_PROMPT_CLAIM_PATH) {
