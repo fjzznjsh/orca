@@ -43,6 +43,7 @@ export function getDecisionService(): DecisionService | null {
     },
     onChange: () => changeListener?.()
   })
+  service.reconcileStalePending()
   return service
 }
 
@@ -56,6 +57,43 @@ export function setDecisionChangeListener(listener: (() => void) | null): void {
 }
 
 export function abortMemorialDecisions(): void {
-  service?.abortPending()
-  service = null
+  if (service) {
+    service.abortPending()
+    service = null
+    return
+  }
+  abortPendingStoreRows()
+}
+
+/** SIGTERM must abort before the existing 3s force-exit; prepend so it runs first. */
+export function installMemorialQuitAbort(
+  source: {
+    prependListener(event: 'SIGTERM' | 'SIGINT', listener: () => void): void
+  } = process,
+  abort: () => void = abortMemorialDecisions
+): void {
+  source.prependListener('SIGTERM', abort)
+  source.prependListener('SIGINT', abort)
+}
+
+function abortPendingStoreRows(): void {
+  const db = getMemorialDecisionDatabase()
+  if (!db) {
+    return
+  }
+  const store = new DecisionStore(db)
+  const at = new Date().toISOString()
+  const tasks = getMemorialTaskService()
+  for (const row of store.listPending()) {
+    store.abort(row.id, at)
+    try {
+      tasks?.recordTaskEvent(row.taskId, {
+        type: 'decision_resolved',
+        at,
+        decisionId: row.id
+      })
+    } catch (error) {
+      console.error('[memorial] decision event failed', 'decision_resolved', error)
+    }
+  }
 }

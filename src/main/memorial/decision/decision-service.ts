@@ -14,6 +14,7 @@ import { parseHumanSelections } from '../../../shared/memorial/decision/validate
 import { acceptRecommendation } from './accept-recommendation'
 import type { SlowDeliverer, SlowDeliveryOutcome } from './decision-delivery'
 import { DecisionLane } from './decision-lane'
+import { replayStoredDecision } from './decision-replay'
 import type { DecisionStore, StoredDecision } from './decision-store'
 import {
   DECISION_SLOW_C_MS,
@@ -161,41 +162,50 @@ export class DecisionService {
   }
 
   recordFallbackCap(taskId: string, paneKey: string, generationId: string): string {
-    const packet: QuestionPacket = {
-      id: `fallback-cap:${taskId}:${generationId}`,
-      taskId,
-      paneKey,
-      questions: [{ id: 'cap', text: FALLBACK_CAP_MESSAGE, kind: 'free', options: [] }],
-      evidence: [{ kind: 'none', ref: 'fallback-cap' }],
-      reversible: false,
-      userVisible: true,
-      impactIfWrong: '继续自动追问会打转'
-    }
-    const existing = this.replay(packet.id)
-    if (existing?.status === 'answered') {
+    const id = `fallback-cap:${taskId}:${generationId}`
+    if (replayStoredDecision(this.options.store, this.lane, id)?.status === 'answered') {
       return FALLBACK_CAP_MESSAGE
     }
-    const answer: Answer = {
-      answers: [{ questionId: 'cap', text: FALLBACK_CAP_MESSAGE }],
-      rationale: '同一轮兜底超过 5 次',
-      decidedBy: 'rule',
-      tier: 'C'
-    }
-    this.finishAnswered(packet, 'fallback', answer, generationId)
+    this.finishAnswered(
+      {
+        id,
+        taskId,
+        paneKey,
+        questions: [{ id: 'cap', text: FALLBACK_CAP_MESSAGE, kind: 'free', options: [] }],
+        evidence: [{ kind: 'none', ref: 'fallback-cap' }],
+        reversible: false,
+        userVisible: true,
+        impactIfWrong: '继续自动追问会打转'
+      },
+      'fallback',
+      {
+        answers: [{ questionId: 'cap', text: FALLBACK_CAP_MESSAGE }],
+        rationale: '同一轮兜底超过 5 次',
+        decidedBy: 'rule',
+        tier: 'C'
+      },
+      generationId
+    )
     return FALLBACK_CAP_MESSAGE
   }
 
   abortPending(): void {
     this.stopped = true
+    this.reconcileStalePending()
+  }
+
+  reconcileStalePending(): number {
     const pending = this.options.store.listPending()
     const at = this.now()
     for (const row of pending) {
       this.options.store.abort(row.id, at)
       this.lane.wake(row.id, { status: 'aborted', message: DECISION_STOPPED_MESSAGE })
+      this.note(row.taskId, { type: 'decision_resolved', at, decisionId: row.id })
     }
     if (pending.length > 0) {
       this.options.onChange?.()
     }
+    return pending.length
   }
 
   private async execute(
@@ -206,7 +216,7 @@ export class DecisionService {
     if (this.stopped) {
       return { status: 'aborted', message: DECISION_STOPPED_MESSAGE }
     }
-    const existing = this.replay(packet.id)
+    const existing = replayStoredDecision(this.options.store, this.lane, packet.id)
     if (existing) {
       return existing.status === 'pending' ? this.wait(packet.id, submitOptions.holdMs) : existing
     }
@@ -227,34 +237,6 @@ export class DecisionService {
       return this.finishAnswered(packet, channel, led, submitOptions.generationId)
     }
     return this.enqueue(packet, channel, submitOptions)
-  }
-
-  private replay(id: string): SubmitResult | null {
-    const stored = this.options.store.get(id)
-    if (!stored) {
-      return null
-    }
-    if (stored.status === 'aborted') {
-      return { status: 'aborted', message: DECISION_STOPPED_MESSAGE }
-    }
-    if (stored.status === 'answered' && stored.answer) {
-      return { status: 'answered', answer: stored.answer }
-    }
-    if (stored.status === 'answered') {
-      return {
-        status: 'answered',
-        answer: {
-          answers: [],
-          rationale: stored.rationale,
-          decidedBy: stored.decidedBy ?? 'rule',
-          tier: stored.tier ?? 'C'
-        }
-      }
-    }
-    if (this.lane.isDeferred(id) || this.lane.remaining(stored) <= 0) {
-      return this.lane.markDeferred(id)
-    }
-    return { status: 'pending', decisionId: id }
   }
 
   private async askLeader(packet: QuestionPacket): Promise<Answer | null> {

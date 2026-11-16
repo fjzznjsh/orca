@@ -113,7 +113,7 @@ describe('decision service', () => {
   })
 
   it('ends pending decisions when the service stops', async () => {
-    const { service, store } = await harness()
+    const { service, store, events } = await harness()
     const waiting = service.submit(packet({ id: 'stuck', reversible: false }), 'ask', {
       holdMs: null
     })
@@ -124,6 +124,27 @@ describe('decision service', () => {
       message: DECISION_STOPPED_MESSAGE
     })
     expect(store.get('stuck')?.status).toBe('aborted')
+    expect(events.map((event) => event.type)).toContain('decision_resolved')
+  })
+
+  it('turns leftover pending rows into aborted on reconcile, twice', async () => {
+    const { service, store, events } = await harness()
+    const waiting = service.submit(packet({ id: 'stale', reversible: false }), 'ask', {
+      holdMs: 0
+    })
+    await expect(waiting).resolves.toMatchObject({ status: 'pending' })
+    const restarted = new DecisionService({
+      store,
+      leader: escalate,
+      now: () => '2026-11-16T00:01:00.000Z',
+      recordEvent: (_taskId, event) => {
+        events.push(event)
+      }
+    })
+    expect(restarted.reconcileStalePending()).toBe(1)
+    expect(store.get('stale')?.status).toBe('aborted')
+    expect(restarted.reconcileStalePending()).toBe(0)
+    expect(events.filter((event) => event.type === 'decision_resolved')).toHaveLength(1)
   })
 
   it('truncates an oversized packet in the database', async () => {
