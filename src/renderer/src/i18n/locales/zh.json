@@ -23530,6 +23530,17 @@
       "sent": "已写入，等待确认",
       "confirmed": "已送达",
       "unconfirmed": "送达未确认"
+    },
+    "decision": {
+      "pending": "需要你决定",
+      "recommendation": "工人推荐",
+      "impact": "选错的影响",
+      "rationale": "理由",
+      "submit": "提交决定",
+      "automatic": "已自动决定",
+      "overturn": "推翻",
+      "overturned": "已推翻",
+      "pendingCount": "有待答"
     }
   }
 }

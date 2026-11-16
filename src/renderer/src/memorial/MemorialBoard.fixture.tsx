@@ -106,7 +106,9 @@ const actions = {
   onSelect: noop,
   onReply: noop,
   onCancel: noop,
-  onReveal: noop
+  onReveal: noop,
+  onAnswerDecision: noop,
+  onOverturnDecision: noop
 }
 
 export const board = defineFixture({

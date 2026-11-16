@@ -2,6 +2,8 @@ import { ipcMain } from 'electron'
 import {
   MEMORIAL_IPC_CHANNELS,
   MemorialCreateTaskRequest,
+  MemorialDecisionAnswerRequest,
+  MemorialDecisionIdRequest,
   MemorialListTaskEventsRequest,
   MemorialReplyTaskRequest,
   MemorialTaskIdRequest
@@ -31,8 +33,10 @@ import { listMemorialTaskSignals } from '../memorial/task-signals'
 import { TaskNotFoundError, type TaskApplicationService } from '../memorial/task-service'
 import {
   abortMemorialDecisions,
+  getDecisionService,
   setDecisionChangeListener
 } from '../memorial/decision/decision-runtime'
+import { presentDecision } from '../memorial/decision/decision-present'
 import { broadcastMemorialTaskUpdated } from '../memorial/task-update-broadcast'
 
 function requireService(): TaskApplicationService {
@@ -55,6 +59,33 @@ export function registerMemorialHandlers(runtime: OrcaRuntimeService): void {
     noteMemorialHookEvent(event)
     noteMemorialHookArrival(event)
     broadcastMemorialTaskUpdated()
+  })
+
+  ipcMain.handle(MEMORIAL_IPC_CHANNELS.listDecisions, () => {
+    return getDecisionService()?.listAll().map(presentDecision) ?? []
+  })
+
+  ipcMain.handle(MEMORIAL_IPC_CHANNELS.answerDecision, (_event, value: unknown) => {
+    const request = MemorialDecisionAnswerRequest.parse(value)
+    const service = getDecisionService()
+    if (!service) {
+      throw new Error('Memorial task kernel is not running')
+    }
+    const answered = service.answerFromHuman(request.decisionId, request.answers, request.rationale)
+    if (!answered.ok) {
+      throw new Error(answered.errors.join('；'))
+    }
+    broadcastMemorialTaskUpdated()
+    return answered.value
+  })
+
+  ipcMain.handle(MEMORIAL_IPC_CHANNELS.overturnDecision, (_event, value: unknown) => {
+    const { decisionId } = MemorialDecisionIdRequest.parse(value)
+    const changed = getDecisionService()?.overturn(decisionId) ?? false
+    if (changed) {
+      broadcastMemorialTaskUpdated()
+    }
+    return changed
   })
 
   ipcMain.handle(

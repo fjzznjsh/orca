@@ -13,6 +13,9 @@ export const MEMORIAL_IPC_CHANNELS = {
   unshelveTask: 'memorial:unshelveTask',
   acceptTask: 'memorial:acceptTask',
   revealTask: 'memorial:revealTask',
+  listDecisions: 'memorial:listDecisions',
+  answerDecision: 'memorial:decision-answer',
+  overturnDecision: 'memorial:decision-overturn',
   taskUpdated: 'memorial:task-updated'
 }
 
@@ -43,6 +46,26 @@ export const MemorialReplyTaskRequest = z
   })
   .strict()
 export type MemorialReplyTaskRequest = z.infer<typeof MemorialReplyTaskRequest>
+
+export const MemorialDecisionAnswerRequest = z
+  .object({
+    decisionId: z.string().min(1),
+    rationale: z.string(),
+    answers: z.array(
+      z
+        .object({
+          questionId: z.string().min(1),
+          selected: z.array(z.string()).optional(),
+          text: z.string().optional()
+        })
+        .strict()
+    )
+  })
+  .strict()
+export type MemorialDecisionAnswerRequest = z.infer<typeof MemorialDecisionAnswerRequest>
+
+export const MemorialDecisionIdRequest = z.object({ decisionId: z.string().min(1) }).strict()
+export type MemorialDecisionIdRequest = z.infer<typeof MemorialDecisionIdRequest>
 
 export const MemorialListTaskEventsRequest = z
   .object({

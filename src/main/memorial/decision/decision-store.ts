@@ -159,6 +159,13 @@ export class DecisionStore {
       .map(readRow)
   }
 
+  listAll(): StoredDecision[] {
+    return this.db
+      .prepare('SELECT * FROM decisions ORDER BY createdAt ASC, id ASC')
+      .all()
+      .map(readRow)
+  }
+
   listPending(): StoredDecision[] {
     return this.db
       .prepare(`SELECT * FROM decisions WHERE status = 'pending' ORDER BY createdAt ASC, id ASC`)

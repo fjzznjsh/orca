@@ -9,6 +9,7 @@ type Props = {
   task: Task
   selected: boolean
   stalled?: boolean
+  pendingCount?: number
   onSelect: () => void
 }
 
@@ -16,6 +17,7 @@ export function MemorialTaskCard({
   task,
   selected,
   stalled = false,
+  pendingCount = 0,
   onSelect
 }: Props): React.JSX.Element {
   const t = useTranslate()
@@ -52,6 +54,11 @@ export function MemorialTaskCard({
         <p className="mt-2 flex items-center gap-1 text-2xs text-muted-foreground">
           <AlertTriangle className="size-3" />
           {t('memorial.card.denied', '本轮有被拒命令')}
+        </p>
+      ) : null}
+      {pendingCount > 0 ? (
+        <p className="mt-2 text-2xs text-muted-foreground">
+          {t('memorial.decision.pendingCount', 'Waiting for a decision')} {pendingCount}
         </p>
       ) : null}
       {stalled ? (

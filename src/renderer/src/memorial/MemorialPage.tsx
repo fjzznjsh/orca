@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/index'
 import { useTranslate } from '@/i18n/use-translate'
+import type { MemorialDecisionView } from '../../../shared/memorial/decision/decision-view'
 import type { MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
 import type { Task } from '../../../shared/memorial/task'
 import { MemorialBoard, type MemorialBoardActions } from './MemorialBoard'
@@ -18,6 +19,7 @@ export default function MemorialPage({
   const t = useTranslate()
   const [tasks, setTasks] = useState<Task[]>([])
   const [signals, setSignals] = useState<MemorialTaskSignal[]>([])
+  const [decisions, setDecisions] = useState<MemorialDecisionView[]>([])
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
@@ -27,14 +29,20 @@ export default function MemorialPage({
   )
 
   const refresh = useCallback((): void => {
-    void Promise.all([window.api.memorial.listTasks(), window.api.memorial.listTaskSignals()])
-      .then(([nextTasks, nextSignals]) => {
+    void Promise.all([
+      window.api.memorial.listTasks(),
+      window.api.memorial.listTaskSignals(),
+      window.api.memorial.listDecisions()
+    ])
+      .then(([nextTasks, nextSignals, nextDecisions]) => {
         setTasks(nextTasks)
         setSignals(nextSignals)
+        setDecisions(nextDecisions)
       })
       .catch(() => {
         setTasks([])
         setSignals([])
+        setDecisions([])
       })
   }, [])
 
@@ -74,7 +82,10 @@ export default function MemorialPage({
     onSelect: setSelectedTaskId,
     onReply: (taskId, text) => run(window.api.memorial.replyTask(taskId, text)),
     onCancel: (taskId) => run(window.api.memorial.cancelTask(taskId)),
-    onReveal: (taskId) => run(window.api.memorial.revealTask(taskId))
+    onReveal: (taskId) => run(window.api.memorial.revealTask(taskId)),
+    onAnswerDecision: (decisionId, answers, rationale) =>
+      run(window.api.memorial.answerDecision(decisionId, answers, rationale)),
+    onOverturnDecision: (decisionId) => run(window.api.memorial.overturnDecision(decisionId))
   }
 
   return (
@@ -88,6 +99,7 @@ export default function MemorialPage({
         <MemorialBoard
           tasks={tasks}
           signals={signals}
+          decisions={decisions}
           selectedTaskId={selectedTaskId}
           actionsEnabled
           actions={actions}

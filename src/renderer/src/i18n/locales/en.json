@@ -24916,6 +24916,17 @@
       "sent": "已写入，等待确认",
       "confirmed": "已送达",
       "unconfirmed": "送达未确认"
+    },
+    "decision": {
+      "pending": "Needs a decision",
+      "recommendation": "Worker recommendation",
+      "impact": "If this is wrong",
+      "rationale": "Why",
+      "submit": "Submit decision",
+      "automatic": "Automatically decided",
+      "overturn": "Overturn",
+      "overturned": "Overturned",
+      "pendingCount": "Waiting for a decision"
     }
   }
 }

@@ -4,6 +4,8 @@ import type {
   MemorialCreateTaskRequest,
   MemorialTaskSignal
 } from '../../shared/memorial/ipc-contract'
+import type { MemorialDecisionView } from '../../shared/memorial/decision/decision-view'
+import type { AnswerItem } from '../../shared/memorial/decision/packet'
 import type { Task } from '../../shared/memorial/task'
 import type { PersistedTaskEvent } from '../../shared/memorial/ports'
 import type { PreloadApi } from '../api-types'
@@ -15,6 +17,7 @@ export const memorialApi = {
   listTasks: (): Promise<Task[]> => invoke(MEMORIAL_IPC_CHANNELS.listTasks),
   listTaskSignals: (): Promise<MemorialTaskSignal[]> =>
     invoke(MEMORIAL_IPC_CHANNELS.listTaskSignals),
+  listDecisions: (): Promise<MemorialDecisionView[]> => invoke(MEMORIAL_IPC_CHANNELS.listDecisions),
   getTask: (taskId: string): Promise<Task | null> =>
     invoke(MEMORIAL_IPC_CHANNELS.getTask, { taskId }),
   listTaskEvents: (taskId: string, afterSequence?: number): Promise<PersistedTaskEvent[]> =>
@@ -23,6 +26,10 @@ export const memorialApi = {
     invoke(MEMORIAL_IPC_CHANNELS.createTask, request),
   replyTask: (taskId: string, text: string): Promise<Task> =>
     invoke(MEMORIAL_IPC_CHANNELS.replyTask, { taskId, text }),
+  answerDecision: (decisionId: string, answers: AnswerItem[], rationale: string): Promise<void> =>
+    invoke(MEMORIAL_IPC_CHANNELS.answerDecision, { decisionId, answers, rationale }),
+  overturnDecision: (decisionId: string): Promise<boolean> =>
+    invoke(MEMORIAL_IPC_CHANNELS.overturnDecision, { decisionId }),
   cancelTask: (taskId: string): Promise<Task> =>
     invoke(MEMORIAL_IPC_CHANNELS.cancelTask, { taskId }),
   skipTask: (taskId: string): Promise<Task> => invoke(MEMORIAL_IPC_CHANNELS.skipTask, { taskId }),

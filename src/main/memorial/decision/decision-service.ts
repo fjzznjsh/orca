@@ -102,6 +102,10 @@ export class DecisionService {
     return this.options.store.listByTask(taskId)
   }
 
+  listAll(): StoredDecision[] {
+    return this.options.store.listAll()
+  }
+
   get(decisionId: string): StoredDecision | null {
     return this.options.store.get(decisionId)
   }

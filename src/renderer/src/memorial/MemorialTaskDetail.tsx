@@ -4,7 +4,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useTranslate } from '@/i18n/use-translate'
+import type { MemorialDecisionView } from '../../../shared/memorial/decision/decision-view'
+import type { AnswerItem } from '../../../shared/memorial/decision/packet'
 import type { MemorialReplyGate, MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
+import { MemorialDecisionPanel } from './MemorialDecisionPanel'
 import type { Task } from '../../../shared/memorial/task'
 import { attentionLabel, executionLabel, taskTypeLabel } from './memorial-labels'
 
@@ -15,6 +18,9 @@ type Props = {
   onReply: (text: string) => void
   onCancel: () => void
   onReveal: () => void
+  decisions: MemorialDecisionView[]
+  onAnswerDecision: (decisionId: string, answers: AnswerItem[], rationale: string) => void
+  onOverturnDecision: (decisionId: string) => void
 }
 
 function gateHint(gate: MemorialReplyGate | undefined, t: ReturnType<typeof useTranslate>): string {
@@ -56,7 +62,10 @@ export function MemorialTaskDetail({
   actionsEnabled,
   onReply,
   onCancel,
-  onReveal
+  onReveal,
+  decisions,
+  onAnswerDecision,
+  onOverturnDecision
 }: Props): React.JSX.Element {
   const t = useTranslate()
   const [reply, setReply] = useState('')
@@ -148,6 +157,12 @@ export function MemorialTaskDetail({
           </Button>
         </div>
       </div>
+
+      <MemorialDecisionPanel
+        decisions={decisions}
+        onAnswer={onAnswerDecision}
+        onOverturn={onOverturnDecision}
+      />
 
       <p className="mt-auto pt-4 text-3xs text-muted-foreground">
         {t('memorial.detail.truncated', '命令输出与助手回复在展示前已截断到 4000 字符')}

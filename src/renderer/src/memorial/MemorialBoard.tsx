@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/class-names'
 import { useTranslate } from '@/i18n/use-translate'
 import { deriveDashboardGroup } from '../../../shared/memorial/dashboard'
+import type { MemorialDecisionView } from '../../../shared/memorial/decision/decision-view'
+import type { AnswerItem } from '../../../shared/memorial/decision/packet'
 import type { MemorialTaskSignal } from '../../../shared/memorial/ipc-contract'
 import type { Task } from '../../../shared/memorial/task'
 import { GROUP_ORDER, groupLabel } from './memorial-labels'
@@ -17,9 +19,12 @@ export type MemorialBoardActions = {
   onReply: (taskId: string, text: string) => void
   onCancel: (taskId: string) => void
   onReveal: (taskId: string) => void
+  onAnswerDecision: (decisionId: string, answers: AnswerItem[], rationale: string) => void
+  onOverturnDecision: (decisionId: string) => void
 }
 
 const NO_SIGNALS: MemorialTaskSignal[] = []
+const NO_DECISIONS: MemorialDecisionView[] = []
 
 type Props = {
   tasks: Task[]
@@ -27,6 +32,7 @@ type Props = {
   actionsEnabled: boolean
   actions: MemorialBoardActions
   signals?: MemorialTaskSignal[]
+  decisions?: MemorialDecisionView[]
   compact?: boolean
 }
 
@@ -36,6 +42,7 @@ export function MemorialBoard({
   actionsEnabled,
   actions,
   signals = NO_SIGNALS,
+  decisions = NO_DECISIONS,
   compact = false
 }: Props): React.JSX.Element {
   const t = useTranslate()
@@ -54,6 +61,9 @@ export function MemorialBoard({
       onReply={(text) => actions.onReply(selected.id, text)}
       onCancel={() => actions.onCancel(selected.id)}
       onReveal={() => actions.onReveal(selected.id)}
+      decisions={decisions.filter((item) => item.taskId === selected.id)}
+      onAnswerDecision={actions.onAnswerDecision}
+      onOverturnDecision={actions.onOverturnDecision}
     />
   ) : null
   const detailPage = compact && detail !== null
@@ -152,6 +162,11 @@ export function MemorialBoard({
                         task={task}
                         selected={task.id === selectedTaskId}
                         stalled={signalFor(task.id)?.stalled === true}
+                        pendingCount={
+                          decisions.filter(
+                            (item) => item.taskId === task.id && item.status === 'pending'
+                          ).length
+                        }
                         onSelect={() => actions.onSelect(task.id)}
                       />
                     ))}
