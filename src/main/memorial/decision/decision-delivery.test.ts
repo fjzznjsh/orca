@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { MemorialHookEvent } from '../../../shared/memorial/hook-event'
+import type { RuntimeAgentPromptWriteOptions } from '../../runtime/terminal/input/agent-prompt-write-options'
 import { deliverSlowDecisionAnswer, type SlowAnswerDelivery } from './decision-delivery'
 
 vi.mock('../task-update-broadcast', () => ({
@@ -46,10 +47,10 @@ function runtime(accepted = true) {
       sendTerminalAgentPrompt: async (
         handle: string,
         text: string,
-        options: { expectedBinding: { ptyId: string } }
+        options: RuntimeAgentPromptWriteOptions
       ) => {
-        calls.push({ handle, text, expectedPty: options.expectedBinding.ptyId })
-        return { accepted }
+        calls.push({ handle, text, expectedPty: options.expectedBinding?.ptyId ?? '' })
+        return { handle, accepted, bytesWritten: text.length }
       }
     }
   }
