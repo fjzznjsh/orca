@@ -6,6 +6,7 @@ import type { OrcaRuntimeService } from '../runtime/orca-runtime'
 import type { MemorialCreateTaskRequest } from '../../shared/memorial/ipc-contract'
 import type { Task } from '../../shared/memorial/task'
 import { writeWorktreeLeaderMcp } from './decision/project-mcp'
+import { WORKER_PREAMBLE } from './decision/worker-preamble'
 import { getMemorialTaskService } from './task-kernel'
 
 /** agentArgs replaces the default argv, so --yolo stays with D-11's --force. MCP approval is a separate flag. */
@@ -34,6 +35,7 @@ const AgentLaunchResult = z.object({
 
 function buildPrompt(request: MemorialCreateTaskRequest): string {
   return [
+    WORKER_PREAMBLE,
     `任务：${request.title}`,
     `目标：${request.goal || '（未填写）'}`,
     `约束：${request.constraints || '（未填写）'}`,
