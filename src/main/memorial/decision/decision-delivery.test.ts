@@ -43,7 +43,11 @@ function runtime(accepted = true) {
     terminal: {
       getTerminalHandleForPaneKey: (paneKey: string) =>
         paneKey === 'missing-pane' ? null : 'handle-1',
-      getTerminalPromptRequestBinding: () => ({ ptyId: 'pty-7', processIncarnation: 2 }),
+      getTerminalPromptRequestBinding: () => ({
+        ptyId: 'pty-7',
+        processIncarnation: '2',
+        generation: 1
+      }),
       sendTerminalAgentPrompt: async (
         handle: string,
         text: string,
