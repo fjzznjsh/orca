@@ -7,7 +7,7 @@ import { parseHumanSelections } from '../../../shared/memorial/decision/validate
 import type { DecisionInputResult } from '../../../shared/memorial/decision/packet'
 import { acceptRecommendation } from './accept-recommendation'
 import type { DecisionStore, StoredDecision } from './decision-store'
-import { DECISION_STOPPED_MESSAGE } from './decision-text'
+import { DECISION_STOPPED_MESSAGE, FALLBACK_CAP_MESSAGE } from './decision-text'
 
 export const DECISION_HOLD_MS = 45_000
 
@@ -104,6 +104,31 @@ export class DecisionService {
 
   get(decisionId: string): StoredDecision | null {
     return this.options.store.get(decisionId)
+  }
+
+  recordFallbackCap(taskId: string, paneKey: string, generationId: string): string {
+    const packet: QuestionPacket = {
+      id: `fallback-cap:${taskId}:${generationId}`,
+      taskId,
+      paneKey,
+      questions: [{ id: 'cap', text: FALLBACK_CAP_MESSAGE, kind: 'free', options: [] }],
+      evidence: [{ kind: 'none', ref: 'fallback-cap' }],
+      reversible: false,
+      userVisible: true,
+      impactIfWrong: '继续自动追问会打转'
+    }
+    const existing = this.replay(packet.id)
+    if (existing?.status === 'answered') {
+      return FALLBACK_CAP_MESSAGE
+    }
+    const answer: Answer = {
+      answers: [{ questionId: 'cap', text: FALLBACK_CAP_MESSAGE }],
+      rationale: '同一轮兜底超过 5 次',
+      decidedBy: 'rule',
+      tier: 'C'
+    }
+    this.finishAnswered(packet, 'fallback', answer, generationId)
+    return FALLBACK_CAP_MESSAGE
   }
 
   abortPending(): void {

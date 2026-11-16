@@ -29,6 +29,7 @@ import {
   getPosixManagedCommand,
   MEMORIAL_CURSOR_HOOK_FILE_NAME
 } from './hook-script'
+import { MEMORIAL_STOP_GATE_FILE_NAME, stopGateScript } from '../memorial/decision/stop-gate-script'
 
 function getConfigPath(): string {
   return join(homedir(), '.cursor', 'hooks.json')
@@ -151,6 +152,9 @@ export class CursorHookService {
       nextConfig.version = 1
     }
     writeManagedScript(scriptPath, getManagedScript())
+    const stopGatePath = join(homedir(), '.memorial', 'agent-hooks', MEMORIAL_STOP_GATE_FILE_NAME)
+    writeManagedScript(stopGatePath, stopGateScript())
+    nextHooks.stop = upsertStopGate(nextHooks.stop, stopGatePath)
     writeHooksJson(configPath, nextConfig)
     return this.getStatus()
   }
@@ -247,3 +251,20 @@ export class CursorHookService {
 }
 
 export const cursorHookService = new CursorHookService()
+
+function upsertStopGate(
+  current: HookDefinition[] | undefined,
+  scriptPath: string
+): HookDefinition[] {
+  const kept = (current ?? []).filter(
+    (definition) => !String(definition.command ?? '').includes(MEMORIAL_STOP_GATE_FILE_NAME)
+  )
+  return [
+    ...kept,
+    {
+      command: `/usr/local/bin/python3 ${scriptPath}`,
+      timeout: 900,
+      loop_limit: 20
+    }
+  ]
+}

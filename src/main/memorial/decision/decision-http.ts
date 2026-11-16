@@ -5,6 +5,7 @@ import { parseWorkerQuestion } from '../../../shared/memorial/decision/validate-
 import type { Task } from '../../../shared/memorial/task'
 import { getMemorialTaskService } from '../task-kernel'
 import { getDecisionService } from './decision-runtime'
+import { followupForStop } from './decision-fallback'
 import { DECISION_HOLD_MS, type SubmitResult } from './decision-service'
 import { DECISION_STOPPED_MESSAGE } from './decision-text'
 
@@ -152,6 +153,24 @@ async function handleAsk(req: IncomingMessage, res: ServerResponse, body: unknow
   writeJson(res, 200, { text })
 }
 
+async function handleFallback(
+  req: IncomingMessage,
+  res: ServerResponse,
+  body: unknown
+): Promise<void> {
+  const record = isRecord(body) ? body : {}
+  const headerPane = req.headers['x-memorial-pane-key']
+  const paneKey =
+    typeof record.paneKey === 'string'
+      ? record.paneKey
+      : typeof headerPane === 'string'
+        ? headerPane
+        : ''
+  const generationId = typeof record.generationId === 'string' ? record.generationId : ''
+  const message = await followupForStop({ paneKey, generationId })
+  writeJson(res, 200, message ? { followup_message: message } : {})
+}
+
 function toolResult(
   text: string,
   isError = false
@@ -252,6 +271,10 @@ export async function maybeHandleMemorialDecision(
     }
     if (pathname === '/memorial/decision/ask') {
       await handleAsk(req, res, body)
+      return true
+    }
+    if (pathname === '/memorial/decision/fallback') {
+      await handleFallback(req, res, body)
       return true
     }
     if (pathname === '/memorial/decision/mcp') {
