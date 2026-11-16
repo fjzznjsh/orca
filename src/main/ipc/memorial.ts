@@ -22,6 +22,7 @@ import {
 import {
   getMemorialTaskService,
   setMemorialHookObserver,
+  setMemorialKernelStartHook,
   setMemorialKernelStopHook
 } from '../memorial/task-kernel'
 import {
@@ -64,6 +65,10 @@ export function registerMemorialHandlers(runtime: OrcaRuntimeService): void {
     clearMemorialReplyTimers()
     abortMemorialDecisions()
   })
+  setMemorialKernelStartHook(() => {
+    getDecisionService()
+  })
+  getDecisionService()
   setMemorialHookObserver((event) => {
     noteMemorialHookEvent(event)
     noteMemorialHookArrival(event)

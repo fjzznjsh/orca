@@ -38,6 +38,7 @@ let decisionDatabase: SyncDatabase | null = null
 let taskService: TaskApplicationService | null = null
 let hookObserver: ((event: MemorialHookEvent) => void) | null = null
 let kernelStopHook: (() => void) | null = null
+let kernelStartHook: (() => void) | null = null
 let opener: (directory: string) => Promise<KernelDatabase> = openTaskKernelDatabase
 
 /** Main-process observers run after a hook commits; the kernel stays free of Electron imports. */
@@ -48,6 +49,11 @@ export function setMemorialHookObserver(observer: (event: MemorialHookEvent) => 
 /** Lets the Electron-side assembly clear its own timers without importing it here. */
 export function setMemorialKernelStopHook(hook: (() => void) | null): void {
   kernelStopHook = hook
+}
+
+/** Runs after the database opens so leftover pending decisions can be reconciled. */
+export function setMemorialKernelStartHook(hook: (() => void) | null): void {
+  kernelStartHook = hook
 }
 
 let stopBudgetMs = DEFAULT_STOP_BUDGET_MS
@@ -189,6 +195,11 @@ async function ensureDatabase(): Promise<KernelDatabase | null> {
       armPruneTimer(opened)
     }
     console.log(`[memorial] task kernel started: ${join(directory, MEMORIAL_DATABASE_FILE)}`)
+    try {
+      kernelStartHook?.()
+    } catch (error) {
+      console.error('[memorial] kernel start hook failed', error)
+    }
     return opened
   } catch (error) {
     console.error('[memorial] task kernel database unavailable', error)
@@ -280,6 +291,7 @@ export function resetMemorialKernelForTests(): void {
   userDataPath = null
   stopDeadline = null
   hookObserver = null
+  kernelStartHook = null
   phase = 'idle'
 }
 

@@ -7,6 +7,7 @@ import {
   enqueueMemorialHook,
   memorialKernelPhaseForTests,
   resetMemorialKernelForTests,
+  setMemorialKernelStartHook,
   startMemorialKernel,
   stopMemorialKernel
 } from './task-kernel'
@@ -200,6 +201,21 @@ describe('task kernel lifecycle', () => {
     await vi.advanceTimersByTimeAsync(1_000)
     expect(seen).toEqual(['after-retry'])
     expect(attempts).toBe(2)
+  })
+
+  it('runs the start hook after the database opens', async () => {
+    const started: string[] = []
+    setMemorialKernelStartHook(() => {
+      started.push('opened')
+    })
+    startMemorialKernel({
+      userDataPath: 'memorial-kernel',
+      openDatabase: openDatabase(() => undefined)
+    })
+    await vi.waitFor(() => {
+      expect(started).toEqual(['opened'])
+    })
+    await stopMemorialKernel()
   })
 
   it('logs the database path when the kernel opens', async () => {
